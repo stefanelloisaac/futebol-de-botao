@@ -1,25 +1,31 @@
-import type { SoundPort } from '$lib/services/ports/SoundPort';
-
-type OscillatorType = 'sine' | 'square' | 'triangle' | 'sawtooth';
+import type { SoundId, SoundPort } from '$lib/services/ports/SoundPort';
 
 /**
- * Sound manager using Web Audio API to generate all sounds programmatically.
- * No external audio files needed. Falls back silently if AudioContext unavailable.
+ * Procedural sound manager using the Web Audio API.
+ * All sounds are synthesised at runtime — no external audio files needed.
  */
 export class LocalSoundManager implements SoundPort {
   private ctx: AudioContext | null = null;
+  private masterGain: GainNode | null = null;
   private muted = false;
+  private ambientSource: AudioBufferSourceNode | null = null;
   private ambientGain: GainNode | null = null;
-  private ambientInterval: ReturnType<typeof setInterval> | null = null;
 
-  private getCtx(): AudioContext | null {
-    if (typeof window === 'undefined') return null;
+  constructor() {
+    // AudioContext is created lazily on first user interaction to comply with
+    // browser autoplay policies. Call ensureContext() before any play() call.
+  }
+
+  private ensureContext(): AudioContext {
     if (!this.ctx) {
-      try {
-        this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      } catch {
-        return null;
-      }
+      const Ctor =
+        window.AudioContext ??
+        (window as unknown as { webkitAudioContext: typeof AudioContext })
+          .webkitAudioContext;
+      this.ctx = new Ctor();
+      this.masterGain = this.ctx.createGain();
+      this.masterGain.gain.value = 0.45;
+      this.masterGain.connect(this.ctx.destination);
     }
     if (this.ctx.state === 'suspended') {
       this.ctx.resume();
@@ -27,129 +33,205 @@ export class LocalSoundManager implements SoundPort {
     return this.ctx;
   }
 
-  private tone(
-    freq: number,
-    duration: number,
-    type: OscillatorType = 'sine',
-    volume = 0.15,
-    delay = 0
-  ): void {
-    const ctx = this.getCtx();
-    if (!ctx || this.muted) return;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-    gain.gain.setValueAtTime(volume, ctx.currentTime + delay);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(ctx.currentTime + delay);
-    osc.stop(ctx.currentTime + delay + duration);
-  }
-
-  private noise(duration: number, volume = 0.08): void {
-    const ctx = this.getCtx();
-    if (!ctx || this.muted) return;
-    const bufferSize = ctx.sampleRate * duration;
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
+  setMuted(muted: boolean): void {
+    this.muted = muted;
+    if (this.masterGain) {
+      this.masterGain.gain.value = muted ? 0 : 0.45;
     }
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(volume, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-    source.connect(gain);
-    gain.connect(ctx.destination);
-    source.start();
+    if (muted) {
+      this.stopAmbient();
+    } else {
+      // Ambient will restart on next startAmbient call
+    }
   }
 
-  play(name: string): void {
-    switch (name) {
-      case 'whistle_start':
-        this.tone(800, 0.5, 'sine', 0.12);
-        setTimeout(() => this.tone(1000, 0.6, 'sine', 0.12), 150);
-        break;
-      case 'whistle_end':
-        this.tone(1000, 0.3, 'sine', 0.12);
-        setTimeout(() => this.tone(700, 0.5, 'sine', 0.12), 120);
-        break;
+  play(id: SoundId): void {
+    if (this.muted) return;
+    const ctx = this.ensureContext();
+    switch (id) {
       case 'shot':
-        this.tone(200, 0.08, 'square', 0.06);
-        this.noise(0.04, 0.04);
-        break;
-      case 'goal':
-        this.tone(523, 0.15, 'triangle', 0.15);
-        setTimeout(() => this.tone(659, 0.15, 'triangle', 0.15), 120);
-        setTimeout(() => this.tone(784, 0.25, 'triangle', 0.15), 240);
-        this.noise(0.1, 0.06);
+        this.playShot(ctx);
         break;
       case 'collision':
-        this.tone(120, 0.04, 'square', 0.04);
-        this.noise(0.03, 0.03);
+        this.playCollision(ctx);
+        break;
+      case 'goal':
+        this.playGoal(ctx);
+        break;
+      case 'whistle_start':
+        this.playWhistle(ctx, true);
+        break;
+      case 'whistle_end':
+        this.playWhistle(ctx, false);
         break;
       default:
-        this.tone(440, 0.1, 'sine', 0.05);
+        break;
     }
   }
 
   startAmbient(): void {
-    const ctx = this.getCtx();
-    if (!ctx || this.muted) return;
+    if (this.muted || this.ambientSource) return;
+    const ctx = this.ensureContext();
     this.stopAmbient();
-    this.ambientGain = ctx.createGain();
-    this.ambientGain.gain.setValueAtTime(0.015, ctx.currentTime);
-    this.ambientGain.connect(ctx.destination);
 
-    // Low crowd hum
-    const oscLow = ctx.createOscillator();
-    oscLow.type = 'sawtooth';
-    oscLow.frequency.setValueAtTime(80, ctx.currentTime);
-    const lowGain = ctx.createGain();
-    lowGain.gain.setValueAtTime(0.015, ctx.currentTime);
-    oscLow.connect(lowGain);
-    lowGain.connect(this.ambientGain);
-    oscLow.start();
+    // Ambient crowd noise: filtered noise with slow modulation
+    const bufSize = ctx.sampleRate * 4; // 4 second loop
+    const buffer = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) {
+      // Band-limited noise with slow volume modulation (crowd "wave")
+      const t = i / ctx.sampleRate;
+      const mod = 0.5 + 0.5 * Math.sin(t * 0.15); // slow 0.15 Hz modulation
+      data[i] = (Math.random() * 2 - 1) * mod * 0.3;
+    }
 
-    this.ambientInterval = setInterval(() => {
-      if (this.muted || !this.ambientGain) return;
-      // Random crowd swell
-      const swell = ctx.createGain();
-      swell.gain.setValueAtTime(0.01, ctx.currentTime);
-      swell.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
-      const osc = ctx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(100 + Math.random() * 50, ctx.currentTime);
-      osc.connect(swell);
-      swell.connect(this.ambientGain);
-      osc.start();
-      osc.stop(ctx.currentTime + 1);
-    }, 3000);
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (this.ambientInterval as any)?.unref?.();
+    const bandpass = ctx.createBiquadFilter();
+    bandpass.type = 'bandpass';
+    bandpass.frequency.value = 350;
+    bandpass.Q.value = 0.5;
+
+    const gain = ctx.createGain();
+    gain.gain.value = 0.12;
+    this.ambientGain = gain;
+
+    source.connect(bandpass);
+    bandpass.connect(gain);
+    gain.connect(this.masterGain!);
+    source.start();
+    this.ambientSource = source;
   }
 
   stopAmbient(): void {
-    if (this.ambientInterval) {
-      clearInterval(this.ambientInterval);
-      this.ambientInterval = null;
+    if (this.ambientSource) {
+      try {
+        this.ambientSource.stop();
+      } catch {
+        // already stopped
+      }
+      this.ambientSource = null;
     }
-    if (this.ambientGain) {
-      this.ambientGain.gain.setValueAtTime(0, (this.ctx?.currentTime ?? 0) + 0.1);
-      this.ambientGain = null;
+    this.ambientGain = null;
+  }
+
+  destroy(): void {
+    this.stopAmbient();
+    if (this.ctx) {
+      this.ctx.close();
+      this.ctx = null;
     }
   }
 
-  setMuted(muted: boolean): void {
-    this.muted = muted;
-    if (muted) this.stopAmbient();
+  // ── Individual sound generators ──────────────────────────────────
+
+  private playShot(ctx: AudioContext): void {
+    // Slingshot "twang": filtered noise burst with fast pitch drop
+    const dur = 0.15;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(400, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + dur);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(this.masterGain!);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + dur + 0.05);
   }
 
-  isMuted(): boolean {
-    return this.muted;
+  private playCollision(ctx: AudioContext): void {
+    // Short click: bandpass noise burst
+    const dur = 0.06;
+    const bufSize = Math.floor(ctx.sampleRate * dur);
+    const buffer = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) {
+      const env = 1 - i / bufSize;
+      data[i] = (Math.random() * 2 - 1) * env;
+    }
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+
+    const bandpass = ctx.createBiquadFilter();
+    bandpass.type = 'bandpass';
+    bandpass.frequency.value = 1800;
+    bandpass.Q.value = 2;
+
+    const gain = ctx.createGain();
+    gain.gain.value = 0.2;
+
+    source.connect(bandpass);
+    bandpass.connect(gain);
+    gain.connect(this.masterGain!);
+    source.start();
+  }
+
+  private playGoal(ctx: AudioContext): void {
+    // Celebratory rising tones
+    const notes = [523, 659, 784, 1047]; // C5, E5, G5, C6
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = freq;
+      const start = ctx.currentTime + i * 0.12;
+      gain.gain.setValueAtTime(0.15, start);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.25);
+      osc.connect(gain);
+      gain.connect(this.masterGain!);
+      osc.start(start);
+      osc.stop(start + 0.3);
+    });
+
+    // Add a "cheer" noise burst after the tones
+    const cheerDur = 0.6;
+    const bufSize = Math.floor(ctx.sampleRate * cheerDur);
+    const buffer = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) {
+      const env = Math.sin((i / bufSize) * Math.PI);
+      data[i] = (Math.random() * 2 - 1) * env * 0.4;
+    }
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 1200;
+
+    const g = ctx.createGain();
+    g.gain.value = 0.15;
+
+    source.connect(lp);
+    lp.connect(g);
+    g.connect(this.masterGain!);
+    source.start(ctx.currentTime + 0.4);
+  }
+
+  private playWhistle(ctx: AudioContext, start: boolean): void {
+    // Referee whistle: sine sweep
+    const dur = start ? 0.6 : 0.4;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    if (start) {
+      osc.frequency.setValueAtTime(800, ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(1200, ctx.currentTime + 0.15);
+      osc.frequency.linearRampToValueAtTime(900, ctx.currentTime + dur);
+    } else {
+      osc.frequency.setValueAtTime(900, ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(600, ctx.currentTime + dur);
+    }
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.setValueAtTime(0.25, ctx.currentTime + dur * 0.7);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(this.masterGain!);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + dur + 0.05);
   }
 }

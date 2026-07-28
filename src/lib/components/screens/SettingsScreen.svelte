@@ -34,7 +34,7 @@
         </svg>
         Som
       </span>
-      <button class="toggle" class:on={appState.soundEnabled} onclick={toggleSound} aria-label="Alternar som">
+      <button class="toggle" class:on={appState.soundEnabled} onclick={toggleSound}>
         <span class="toggle-knob"></span>
       </button>
     </label>
@@ -47,7 +47,7 @@
         </svg>
         Vibração
       </span>
-      <button class="toggle" class:on={appState.vibrationEnabled} onclick={toggleVibration} aria-label="Alternar vibração">
+      <button class="toggle" class:on={appState.vibrationEnabled} onclick={toggleVibration}>
         <span class="toggle-knob"></span>
       </button>
     </label>

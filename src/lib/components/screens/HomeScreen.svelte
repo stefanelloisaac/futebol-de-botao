@@ -9,6 +9,18 @@
   function openSettings(): void {
     appState.goToScreen('settings');
   }
+
+  function openProfile(): void {
+    appState.goToScreen('profile');
+  }
+
+  function openHistory(): void {
+    appState.goToScreen('history');
+  }
+
+  function openRanking(): void {
+    appState.goToScreen('ranking');
+  }
 </script>
 
 <div class="home">
@@ -34,26 +46,24 @@
       <circle cx="60" cy="100" r="8" fill="#b23a34" stroke="#c94a42" stroke-width="1.5"/>
       <circle cx="100" cy="85" r="8" fill="#b23a34" stroke="#c94a42" stroke-width="1.5"/>
       <circle cx="140" cy="100" r="8" fill="#b23a34" stroke="#c94a42" stroke-width="1.5"/>
-      <circle cx="100" cy="112" r="10" fill="#b23a34" stroke="#c94a42" stroke-width="1.5"/>
-      <circle cx="60" cy="40" r="8" fill="#2f4b73" stroke="#3d5c88" stroke-width="1.5"/>
-      <circle cx="100" cy="55" r="8" fill="#2f4b73" stroke="#3d5c88" stroke-width="1.5"/>
-      <circle cx="140" cy="40" r="8" fill="#2f4b73" stroke="#3d5c88" stroke-width="1.5"/>
-      <circle cx="100" cy="28" r="10" fill="#2f4b73" stroke="#3d5c88" stroke-width="1.5"/>
-      <circle cx="100" cy="70" r="5" fill="#f2e7cf" stroke="#2a231b" stroke-width="0.8"/>
+      <circle cx="70" cy="32" r="7" fill="#2f4b73" stroke="#406080" stroke-width="1.5"/>
+      <circle cx="130" cy="32" r="7" fill="#2f4b73" stroke="#406080" stroke-width="1.5"/>
     </svg>
-    <h1>FUTEBOL <span class="b">DE BOTÃO</span></h1>
-    <div class="sub">edição de mesa · 1962</div>
+    <h1>FUTEBOL<br/>DE&nbsp;BOTÃO</h1>
+    <p class="sub">ediçao de mesa · 1962</p>
   </div>
 
-  <div class="menu" in:fly={{ y: 20, duration: 350, delay: 200, opacity: 0 }}>
-    <button class="btn primary" onclick={play}>Jogar</button>
+  <div class="menu" in:fly={{ y: 20, duration: 300, delay: 120, opacity: 0 }}>
+    <button class="btn primary" onclick={play}>JOGAR</button>
+    <button class="btn" onclick={openProfile}>Perfil</button>
+    <button class="btn" onclick={openRanking}>Ranking</button>
+    <button class="btn" onclick={openHistory}>Histórico</button>
     <button class="btn" onclick={openSettings}>Configurações</button>
   </div>
 
-  <div class="howto" in:fly={{ y: 20, duration: 350, delay: 350, opacity: 0 }}>
+  <div class="howto" in:fly={{ y: 20, duration: 300, delay: 200, opacity: 0 }}>
     <h3>Como jogar</h3>
-    <p>Arraste um disco para trás e solte — como um estilingue — para chutar a bola em direção ao gol adversário.</p>
-    <p>Vence quem fizer {appState.matchConfig.targetGoals} gols primeiro!</p>
+    <p>Arraste para trás e solte para chutar o botão na direção da bola. Marque {3} gols para vencer!</p>
   </div>
 </div>
 
@@ -62,10 +72,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 24px;
-    height: 100%;
-    padding: 20px 24px;
+    gap: 12px;
+    padding: 16px 0;
+    width: 100%;
   }
 
   .logo {
@@ -108,7 +117,7 @@
   .menu {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 10px;
     width: 100%;
     max-width: 260px;
   }
@@ -116,8 +125,8 @@
   .btn {
     font-family: 'Oswald', sans-serif;
     font-weight: 600;
-    font-size: 20px;
-    padding: 14px 0;
+    font-size: 18px;
+    padding: 12px 0;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -149,10 +158,8 @@
     font-size: 17px;
     color: var(--ink);
     margin: 0 0 6px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
   }
   .howto p {
-    margin: 4px 0;
+    margin: 0;
   }
 </style>

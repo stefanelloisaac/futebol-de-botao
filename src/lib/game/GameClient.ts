@@ -1,4 +1,4 @@
-import { Match, computeAiShot, FIELD, type MatchConfig, type MatchPhase, type TeamId } from '../engine';
+import { Match, computeAiShot, getAiDelay, FIELD, type MatchConfig, type MatchPhase, type TeamId, type Difficulty } from '../engine';
 import { PitchRenderer } from '../render/PitchRenderer';
 import { PointerController } from '../input/PointerController';
 
@@ -22,7 +22,6 @@ export interface GameClientOptions {
   onCollision?: () => void;
 }
 
-const AI_DELAY_MS = 650;
 const STEP_MS = 1000 / 60;
 
 export class GameClient {
@@ -35,6 +34,8 @@ export class GameClient {
   private aiScheduled = false;
   private lastState = '';
   private running = false;
+  private difficulty: Difficulty;
+  private _totalShots = 0;
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -48,13 +49,18 @@ export class GameClient {
     this.ctx = ctx;
     this.ctx.scale(dpr, dpr);
 
+    this.difficulty = options.matchConfig.difficulty ?? 'medium';
+
     this.match = new Match(options.matchConfig, {
       onGoal: (scorer) => this.options.onGoal?.(scorer),
       onMatchEnd: (winner) => {
         this.stop();
         this.options.onMatchEnd?.(winner);
       },
-      onShot: (team) => this.options.onShot?.(team),
+      onShot: (team) => {
+        this._totalShots++;
+        this.options.onShot?.(team);
+      },
       onCollision: () => this.options.onCollision?.()
     });
 
@@ -63,6 +69,10 @@ export class GameClient {
       isHumanTurn: () => this.isHumanTurn(),
       onShoot: (cmd) => this.match.applyShot(cmd)
     });
+  }
+
+  get totalShots(): number {
+    return this._totalShots;
   }
 
   private isHumanTurn(): boolean {
@@ -85,13 +95,18 @@ export class GameClient {
 
   restart(): void {
     this.stop();
+    this._totalShots = 0;
+    this.difficulty = this.options.matchConfig.difficulty ?? 'medium';
     this.match = new Match(this.options.matchConfig, {
       onGoal: (scorer) => this.options.onGoal?.(scorer),
       onMatchEnd: (winner) => {
         this.stop();
         this.options.onMatchEnd?.(winner);
       },
-      onShot: (team) => this.options.onShot?.(team),
+      onShot: (team) => {
+        this._totalShots++;
+        this.options.onShot?.(team);
+      },
       onCollision: () => this.options.onCollision?.()
     });
     this.pointer = new PointerController(this.canvas, {
@@ -154,15 +169,16 @@ export class GameClient {
     if (snap.phase !== 'aim' || snap.activeTeam !== 'blue') return;
 
     this.aiScheduled = true;
+    const delay = getAiDelay(this.difficulty);
     setTimeout(() => {
       if (!this.running) return;
       this.aiScheduled = false;
       if (this.match.snapshot().phase !== 'aim') return;
 
-      const shot = computeAiShot(this.match.snapshot(), 'blue');
+      const shot = computeAiShot(this.match.snapshot(), 'blue', this.difficulty);
       if (shot) {
         this.match.applyShot(shot);
       }
-    }, AI_DELAY_MS);
+    }, delay);
   }
 }

@@ -9,9 +9,13 @@ export type TeamId = 'red' | 'blue';
  *  or finished when a team reaches the target goal count. */
 export type MatchPhase = 'aim' | 'resolving' | 'finished';
 
+export type Difficulty = 'easy' | 'medium' | 'hard';
+
 export interface MatchConfig {
   /** Number of goals required to win the match. */
   targetGoals: number;
+  /** AI difficulty (only relevant in single-player mode). */
+  difficulty?: Difficulty;
 }
 
 export interface Vec2 {

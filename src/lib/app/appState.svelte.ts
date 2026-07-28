@@ -17,6 +17,7 @@ function createAppState() {
   let mode = $state<GameMode>('single');
   let matchConfig = $state<MatchConfig>({ targetGoals: 3 });
   let lastResult = $state<MatchResult | null>(null);
+  let lastShots = $state(0);
 
   let soundEnabled = $state(settings.getSoundEnabled());
   let vibrationEnabled = $state(settings.getVibrationEnabled());
@@ -35,6 +36,8 @@ function createAppState() {
     get matchConfig() { return matchConfig; },
     get lastResult() { return lastResult; },
     set lastResult(v: MatchResult | null) { lastResult = v; },
+    get lastShots() { return lastShots; },
+    set lastShots(v: number) { lastShots = v; },
     get soundEnabled() { return soundEnabled; },
     set soundEnabled(v: boolean) {
       soundEnabled = v;
@@ -61,6 +64,41 @@ function createAppState() {
 
     endMatch(result: MatchResult) {
       lastResult = result;
+
+      // Record stats
+      const isPlayerWin = (mode === 'single' && result.winner === 'red') ||
+                          (mode === 'local' && result.winner === 'red');
+      // For local multiplayer, we count it as "won" for the local player (red)
+      // when red wins, otherwise "lost"
+      container.stats.recordMatch(
+        isPlayerWin,
+        result.scoreRed,
+        result.scoreBlue,
+        lastShots
+      );
+
+      // Record match history
+      container.history.add({
+        mode,
+        config: { ...matchConfig },
+        scoreRed: result.scoreRed,
+        scoreBlue: result.scoreBlue,
+        winner: result.winner
+      });
+
+      // Update ranking score based on goals for
+      const stats = container.stats.getStats();
+      const rankingScore = stats.won * 200 + stats.goalsFor * 30 - stats.goalsAgainst * 10;
+      container.ranking.updatePlayerScore(rankingScore);
+
+      // Submit daily challenge result if playing in daily mode
+      if (matchConfig.difficulty === 'hard') {
+        container.daily.submitResult({
+          scoreRed: result.scoreRed,
+          scoreBlue: result.scoreBlue
+        });
+      }
+
       screen = 'result';
     },
 

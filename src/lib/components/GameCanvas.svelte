@@ -53,6 +53,10 @@
   export function destroy(): void {
     client?.destroy();
   }
+
+  export function getTotalShots(): number {
+    return client?.totalShots ?? 0;
+  }
 </script>
 
 <canvas bind:this={canvas}></canvas>

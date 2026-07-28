@@ -1,17 +1,32 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
   import { appState } from '$lib/app/appState.svelte';
+  import type { Difficulty } from '$lib/engine';
+
+  let selectedDifficulty = $state<Difficulty>('medium');
 
   function selectSingle(): void {
-    appState.startMatch('single');
+    appState.startMatch('single', { targetGoals: 3, difficulty: selectedDifficulty });
   }
 
   function selectLocal(): void {
-    appState.startMatch('local');
+    appState.startMatch('local', { targetGoals: 3 });
+  }
+
+  function selectDaily(): void {
+    appState.goToScreen('daily-challenge');
   }
 
   function goBack(): void {
     appState.goHome();
+  }
+
+  function difficultyLabel(d: Difficulty): string {
+    switch (d) {
+      case 'easy': return 'Fácil';
+      case 'medium': return 'Médio';
+      case 'hard': return 'Difícil';
+    }
   }
 </script>
 
@@ -43,11 +58,38 @@
         </svg>
       </span>
       <span class="label">2 Jogadores</span>
-      <span class="desc">Mesmo aparelho</span>
+      <span class="desc">Local</span>
+    </button>
+
+    <button class="mode-card daily" onclick={selectDaily}>
+      <span class="icon">
+        <svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
+          <path d="M12 6v4c0 4-2 8-6 10v2c0 4 4 8 8 8h20c4 0 8-4 8-8v-2c-4-2-6-6-6-10V6H12z" fill="#d9a441" stroke="#b8860b" stroke-width="1.5"/>
+          <rect x="17" y="26" width="14" height="4" rx="1" fill="#2a231b"/>
+          <rect x="14" y="30" width="20" height="3" rx="1" fill="#2a231b"/>
+        </svg>
+      </span>
+      <span class="label">Desafio Diário</span>
+      <span class="desc">Difícil</span>
     </button>
   </div>
 
-  <button class="btn back" onclick={goBack}>Voltar</button>
+  <div class="difficulty-section" in:fly={{ y: 16, duration: 250, delay: 200, opacity: 0 }}>
+    <p class="diff-label">Dificuldade da IA (1 Jogador):</p>
+    <div class="diff-buttons">
+      {#each ['easy', 'medium', 'hard'] as d}
+        <button
+          class="diff-btn"
+          class:selected={selectedDifficulty === d}
+          onclick={() => selectedDifficulty = d as Difficulty}
+        >
+          {difficultyLabel(d as Difficulty)}
+        </button>
+      {/each}
+    </div>
+  </div>
+
+  <button class="back-btn" onclick={goBack} in:fly={{ y: 16, duration: 250, delay: 300, opacity: 0 }}>Voltar</button>
 </div>
 
 <style>
@@ -55,16 +97,16 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 24px;
-    height: 100%;
-    padding: 24px;
+    gap: 10px;
+    padding: 1.5rem 1rem;
+    width: 100%;
   }
 
   h2 {
-    font-family: 'Ultra', serif;
-    font-weight: 400;
-    font-size: 28px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
     color: var(--ink);
     margin: 0;
   }
@@ -72,64 +114,117 @@
   .modes {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
     width: 100%;
     max-width: 300px;
   }
 
   .mode-card {
     display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    background: var(--cream);
+    cursor: pointer;
+    transition: transform 0.08s, box-shadow 0.08s;
+    text-align: left;
+    width: 100%;
+  }
+
+  .mode-card:active {
+    transform: translateY(2px);
+    box-shadow: none;
+  }
+
+  .mode-card.daily {
+    border-color: var(--mustard);
+    background: linear-gradient(135deg, var(--cream), #f0e0b8);
+  }
+
+  .icon {
+    flex: 0 0 40px;
+  }
+
+  .label {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--ink);
+    display: block;
+  }
+
+  .desc {
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    color: var(--wood-dk);
+    display: block;
+  }
+
+  .difficulty-section {
+    width: 100%;
+    max-width: 300px;
+    display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 22px 16px 18px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    background: var(--cream);
-    box-shadow: 0 3px 0 rgba(0,0,0,0.12);
-    transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+    gap: 8px;
+  }
+
+  .diff-label {
     font-family: 'Oswald', sans-serif;
-  }
-  .mode-card:hover {
-    background: #ede0c0;
-  }
-  .mode-card:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 rgba(0,0,0,0.12);
-  }
-
-  .mode-card .icon {
-    margin-bottom: 4px;
-  }
-
-  .mode-card .label {
-    font-weight: 600;
-    font-size: 22px;
-    color: var(--ink);
-  }
-
-  .mode-card .desc {
     font-size: 14px;
     color: var(--wood-dk);
-    font-weight: 400;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
-  .btn.back {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 500;
-    font-size: 18px;
-    padding: 10px 30px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background: transparent;
-    color: var(--wood-dk);
-    border: 1.5px solid var(--wood-lt);
-    transition: background 0.15s, color 0.15s;
+  .diff-buttons {
+    display: flex;
+    gap: 8px;
   }
-  .btn.back:hover {
+
+  .diff-btn {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 8px 18px;
+    border: 2px solid var(--ink);
+    border-radius: 8px;
     background: var(--cream);
     color: var(--ink);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+  }
+
+  .diff-btn.selected {
+    background: var(--mustard);
+    border-color: var(--mustard);
+    color: var(--ink);
+  }
+
+  .diff-btn:hover {
+    background: var(--paper);
+  }
+
+  .diff-btn.selected:hover {
+    background: var(--mustard);
+  }
+
+  .back-btn {
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 28px;
+    background: var(--cream);
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    color: var(--ink);
+    cursor: pointer;
+    margin-top: 6px;
+  }
+  .back-btn:active {
+    transform: translateY(2px);
   }
 </style>

@@ -12,13 +12,23 @@
     activeTeam: TeamId;
     golFlash: 'red' | 'blue' | null;
   } = $props();
+
+  let prevRed = $state(scoreRed);
+  let prevBlue = $state(scoreBlue);
+  let redBump = $derived(scoreRed > prevRed);
+  let blueBump = $derived(scoreBlue > prevBlue);
+
+  $effect(() => {
+    prevRed = scoreRed;
+    prevBlue = scoreBlue;
+  });
 </script>
 
 <div class="board">
   <div class="team red" class:active={activeTeam === 'red'} class:gol={golFlash === 'red'}>
     <span class="lamp"></span>
     <div class="nm">Vermelho</div>
-    <div class="sc" class:bump={golFlash === 'red'}>{scoreRed}</div>
+    <div class="sc" class:bump={redBump}>{scoreRed}</div>
   </div>
   <div class="turn">
     <div class="lbl">Vez do</div>
@@ -29,7 +39,7 @@
   <div class="team blue" class:active={activeTeam === 'blue'} class:gol={golFlash === 'blue'}>
     <span class="lamp"></span>
     <div class="nm">Azul</div>
-    <div class="sc" class:bump={golFlash === 'blue'}>{scoreBlue}</div>
+    <div class="sc" class:bump={blueBump}>{scoreBlue}</div>
   </div>
 </div>
 

@@ -1,1 +1,1 @@
-export type Screen = 'home' | 'mode-select' | 'match' | 'result' | 'settings';
+export type Screen = 'home' | 'mode-select' | 'match' | 'result' | 'settings' | 'profile' | 'history' | 'ranking' | 'daily-challenge';

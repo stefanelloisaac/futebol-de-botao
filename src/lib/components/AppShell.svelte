@@ -8,6 +8,10 @@
   import MatchScreen from '$lib/components/screens/MatchScreen.svelte';
   import ResultScreen from '$lib/components/screens/ResultScreen.svelte';
   import SettingsScreen from '$lib/components/screens/SettingsScreen.svelte';
+  import ProfileScreen from '$lib/components/screens/ProfileScreen.svelte';
+  import HistoryScreen from '$lib/components/screens/HistoryScreen.svelte';
+  import RankingScreen from '$lib/components/screens/RankingScreen.svelte';
+  import DailyChallengeScreen from '$lib/components/screens/DailyChallengeScreen.svelte';
 
   let current = $derived<Screen>(appState.screen);
   let loading = $state(true);
@@ -60,12 +64,28 @@
           <MatchScreen />
         </div>
       {:else if current === 'result'}
-        <div in:fly={{ y: 20, duration: 300, opacity: 0 }}>
+        <div in:scale={{ duration: 200, start: 0.95, opacity: 0 }}>
           <ResultScreen />
         </div>
       {:else if current === 'settings'}
         <div in:fly={{ y: 12, duration: 200, opacity: 0 }}>
           <SettingsScreen />
+        </div>
+      {:else if current === 'profile'}
+        <div in:fly={{ y: 12, duration: 200, opacity: 0 }}>
+          <ProfileScreen />
+        </div>
+      {:else if current === 'history'}
+        <div in:fly={{ y: 12, duration: 200, opacity: 0 }}>
+          <HistoryScreen />
+        </div>
+      {:else if current === 'ranking'}
+        <div in:fly={{ y: 12, duration: 200, opacity: 0 }}>
+          <RankingScreen />
+        </div>
+      {:else if current === 'daily-challenge'}
+        <div in:fly={{ y: 12, duration: 200, opacity: 0 }}>
+          <DailyChallengeScreen />
         </div>
       {/if}
     {/key}
@@ -73,27 +93,17 @@
 {/if}
 
 <style>
-  .shell {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
   .splash {
-    position: fixed;
-    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    background: #dccba6;
-    z-index: 999;
-    animation: splashFadeOut 0.5s ease-in forwards;
-    animation-delay: 0.5s;
+    height: 100%;
+    gap: 8px;
+    pointer-events: none;
+    user-select: none;
+    animation: splashFadeOut 0.3s 0.7s both;
   }
-
   @keyframes splashFadeOut {
     to {
       opacity: 0;

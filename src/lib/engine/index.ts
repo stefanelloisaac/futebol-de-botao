@@ -1,6 +1,6 @@
 /** Public surface of the game engine. Consumers import only from here. */
 export { Match, type MatchEvents } from './match/Match';
-export { computeAiShot } from './ai/simpleAi';
+export { computeAiShot, getAiDelay } from './ai/simpleAi';
 export {
   FIELD,
   GOAL_GAP,
@@ -13,6 +13,7 @@ export type {
   TeamId,
   MatchPhase,
   MatchConfig,
+  Difficulty,
   MatchSnapshot,
   DiscView,
   BallView,

@@ -12,10 +12,15 @@ import { createWorld, type PhysicsWorld } from '../physics/world';
 const { Body, Engine, Events } = Matter;
 
 export interface MatchEvents {
+  /** Fired when a team scores. `scorer` is the team that earned the point. */
   onGoal?: (scorer: TeamId) => void;
+  /** Fired when control passes to a team and it may shoot. */
   onTurnReady?: (team: TeamId) => void;
+  /** Fired when a team reaches the target goal count and wins the match. */
   onMatchEnd?: (winner: TeamId) => void;
+  /** Fired when a disc is shot (slingshot released). */
   onShot?: (team: TeamId) => void;
+  /** Fired on any disc-disc or disc-ball collision. */
   onCollision?: () => void;
 }
 
@@ -23,6 +28,10 @@ function other(team: TeamId): TeamId {
   return team === 'red' ? 'blue' : 'red';
 }
 
+/**
+ * The authoritative match logic. Deliberately free of rendering and input so it
+ * can run in the browser, on mobile, and one day on the server unchanged.
+ */
 export class Match {
   private world: PhysicsWorld;
   private events: MatchEvents;
@@ -43,15 +52,18 @@ export class Match {
     this.world = createWorld();
     this.events = events;
 
+    // Listen for collisions
     Events.on(this.world.engine, 'collisionStart', () => {
       this.collisionsThisStep++;
     });
   }
 
+  /** Expose the physics engine for external use (e.g., collision detection). */
   getEngine(): Matter.Engine {
     return this.world.engine;
   }
 
+  /** Applies a shot to a disc and enters the resolving phase. Ignored when not aiming or match is finished. */
   applyShot(cmd: ShotCommand): void {
     if (this.phase === 'finished' || this.phase !== 'aim' || cmd.team !== this.activeTeam) return;
     const disc = this.world.discs.find((d) => d.team === cmd.team && d.id === cmd.discId);
@@ -84,9 +96,11 @@ export class Match {
     };
   }
 
+  /** Advance the physics one tick, handle goal detection, and turn management. */
   update(): void {
     if (this.phase === 'finished') return;
 
+    // Fire collision events
     if (this.collisionsThisStep > 0) {
       this.events.onCollision?.();
       this.collisionsThisStep = 0;
@@ -98,6 +112,7 @@ export class Match {
       this.goalLock--;
     }
 
+    // Goal detection
     if (this.goalLock === 0) {
       const by = this.detectGoal();
       if (by) {
@@ -116,6 +131,7 @@ export class Match {
 
         this.resetPositions();
         this.phase = 'aim';
+        // After goal, active team stays the same (standard table football rule)
         return;
       }
     }
@@ -151,13 +167,14 @@ export class Match {
 
   private detectGoal(): TeamId | null {
     const b = this.world.ball;
+    // Red's goal is at the top (y = margin), Blue's at the bottom (y = height - margin)
     const inGoalX = Math.abs(b.position.x - FIELD.width / 2) < GOAL_GAP / 2;
 
     if (inGoalX && b.position.y <= FIELD.margin) {
-      return 'blue';
+      return 'blue'; // ball entered top goal → blue conceded, red scores
     }
     if (inGoalX && b.position.y >= FIELD.height - FIELD.margin) {
-      return 'red';
+      return 'red'; // ball entered bottom goal → red conceded, blue scores
     }
     return null;
   }
