@@ -17,38 +17,40 @@
 </script>
 
 <div class="screen">
-  <h2 in:fly={{ y: -16, duration: 250, opacity: 0 }}>Fim de jogo!</h2>
+  <div class="screen-body">
+    <h2 in:fly={{ y: -16, duration: 250, opacity: 0 }}>Fim de jogo!</h2>
 
-  {#if result}
-    <div class={`winner ${winnerColor}`} in:scale={{ duration: 350, delay: 150, start: 0.7, opacity: 0 }}>
-      <span class="trophy">
-        <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
-          <path d="M12 6v4c0 4-2 8-6 10v2c0 4 4 8 8 8h20c4 0 8-4 8-8v-2c-4-2-6-6-6-10V6H12z" fill="#d9a441" stroke="#b8860b" stroke-width="1.5"/>
-          <rect x="17" y="28" width="14" height="4" rx="1" fill="#2a231b"/>
-          <rect x="14" y="32" width="20" height="3" rx="1" fill="#2a231b"/>
-          <rect x="19" y="35" width="10" height="8" rx="1" fill="#7a4d2b" stroke="#5c3820" stroke-width="0.8"/>
-        </svg>
-      </span>
-      <span class="name">{winnerName}</span>
-      <span class="venceu">venceu!</span>
-    </div>
-
-    <div class="score" in:fly={{ y: 16, duration: 300, delay: 300, opacity: 0 }}>
-      <div class="team-score red">
-        <span class="name">{appState.teamNames.red}</span>
-        <span class="goals">{result.scoreRed}</span>
+    {#if result}
+      <div class={`winner ${winnerColor}`} in:scale={{ duration: 350, delay: 150, start: 0.7, opacity: 0 }}>
+        <span class="trophy">
+          <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
+            <path d="M12 6v4c0 4-2 8-6 10v2c0 4 4 8 8 8h20c4 0 8-4 8-8v-2c-4-2-6-6-6-10V6H12z" fill="#d9a441" stroke="#b8860b" stroke-width="1.5"/>
+            <rect x="17" y="28" width="14" height="4" rx="1" fill="#2a231b"/>
+            <rect x="14" y="32" width="20" height="3" rx="1" fill="#2a231b"/>
+            <rect x="19" y="35" width="10" height="8" rx="1" fill="#7a4d2b" stroke="#5c3820" stroke-width="0.8"/>
+          </svg>
+        </span>
+        <span class="name">{winnerName}</span>
+        <span class="venceu">venceu!</span>
       </div>
-      <span class="sep">×</span>
-      <div class="team-score blue">
-        <span class="name">{appState.teamNames.blue}</span>
-        <span class="goals">{result.scoreBlue}</span>
-      </div>
-    </div>
-  {/if}
 
-  <div class="actions" in:fly={{ y: 16, duration: 300, delay: 450, opacity: 0 }}>
-    <button class="btn-primary" onclick={rematch}>Revanche</button>
-    <button class="btn-secondary" onclick={goHome}>Menu</button>
+      <div class="score" in:fly={{ y: 16, duration: 300, delay: 300, opacity: 0 }}>
+        <div class="team-score red">
+          <span class="name">{appState.teamNames.red}</span>
+          <span class="goals">{result.scoreRed}</span>
+        </div>
+        <span class="sep">×</span>
+        <div class="team-score blue">
+          <span class="name">{appState.teamNames.blue}</span>
+          <span class="goals">{result.scoreBlue}</span>
+        </div>
+      </div>
+    {/if}
+
+    <div class="actions" in:fly={{ y: 16, duration: 300, delay: 450, opacity: 0 }}>
+      <button class="btn-primary" onclick={rematch}>Revanche</button>
+      <button class="btn-secondary" onclick={goHome}>Menu</button>
+    </div>
   </div>
 </div>
 
@@ -57,11 +59,23 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
-    height: 100%;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    max-width: 440px;
     padding: 24px;
+  }
+
+  .screen-body {
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
   }
 
   h2 {
@@ -78,9 +92,7 @@
     align-items: center;
     gap: 4px;
   }
-  .winner .trophy {
-    margin-bottom: 4px;
-  }
+  .winner .trophy { margin-bottom: 4px; }
 
   .winner .name {
     font-family: 'Ultra', serif;

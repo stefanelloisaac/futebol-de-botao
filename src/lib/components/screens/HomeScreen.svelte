@@ -53,17 +53,19 @@
     <p class="sub">ediçao de mesa · 1962</p>
   </div>
 
-  <div class="menu" in:fly={{ y: 20, duration: 300, delay: 120, opacity: 0 }}>
-    <button class="btn-primary" onclick={play}>JOGAR</button>
-    <button class="btn-secondary" onclick={openProfile}>Perfil</button>
-    <button class="btn-secondary" onclick={openRanking}>Ranking</button>
-    <button class="btn-secondary" onclick={openHistory}>Histórico</button>
-    <button class="btn-secondary" onclick={openSettings}>Configurações</button>
-  </div>
+  <div class="screen-body">
+    <div class="menu" in:fly={{ y: 20, duration: 300, delay: 120, opacity: 0 }}>
+      <button class="btn-primary" onclick={play}>JOGAR</button>
+      <button class="btn-secondary" onclick={openProfile}>Perfil</button>
+      <button class="btn-secondary" onclick={openRanking}>Ranking</button>
+      <button class="btn-secondary" onclick={openHistory}>Histórico</button>
+      <button class="btn-secondary" onclick={openSettings}>Configurações</button>
+    </div>
 
-  <div class="howto" in:fly={{ y: 20, duration: 300, delay: 200, opacity: 0 }}>
-    <h3>Como jogar</h3>
-    <p>Arraste para trás e solte para chutar o botão na direção da bola. Marque 3 gols para vencer!</p>
+    <div class="howto" in:fly={{ y: 20, duration: 300, delay: 200, opacity: 0 }}>
+      <h3>Como jogar</h3>
+      <p>Arraste para trás e solte para chutar o botão na direção da bola. Marque 3 gols para vencer!</p>
+    </div>
   </div>
 </div>
 
@@ -72,11 +74,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
-    height: 100%;
-    padding: 24px;
-    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
     width: 100%;
+    max-width: 440px;
+    padding: 24px;
+    gap: 12px;
   }
 
   .logo {
@@ -84,6 +87,7 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
+    flex-shrink: 0;
   }
 
   .logo-svg {
@@ -103,6 +107,7 @@
     color: var(--ink);
     text-align: center;
   }
+
   .logo .sub {
     font-family: 'Oswald', sans-serif;
     font-size: 14px;
@@ -111,6 +116,17 @@
     color: var(--wood-dk);
     text-align: center;
     margin-top: 6px;
+  }
+
+  .screen-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
   }
 
   .menu {

@@ -44,11 +44,10 @@ body {
 		auto,
 		7px 7px;
 	display: flex;
-	align-items: center;
+	align-items: stretch;
 	justify-content: center;
-	height: 100vh;
-	height: 100dvh;
-	padding: 8px 10px;
+	min-height: 100dvh;
+	padding: 0;
 	overflow: hidden;
 }
 body::before {
@@ -64,9 +63,10 @@ body::before {
 .wrap {
 	width: 100%;
 	max-width: 440px;
-	height: 100%;
+	flex: 1;
 	display: flex;
 	flex-direction: column;
+	padding: 8px 10px;
 }
 .title,
 .board,

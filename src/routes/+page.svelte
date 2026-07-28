@@ -10,9 +10,9 @@
   .wrap {
     width: 100%;
     max-width: 440px;
-    height: 100%;
-    height: 100dvh;
+    flex: 1;
     display: flex;
     flex-direction: column;
+    padding: 8px 10px;
   }
 </style>

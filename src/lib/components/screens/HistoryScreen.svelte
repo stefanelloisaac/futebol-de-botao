@@ -31,36 +31,38 @@
 <div class="screen">
   <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Histórico de Partidas</h2>
 
-  {#if records.length === 0}
-    <p class="empty" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
-      Nenhuma partida registrada ainda.
-    </p>
-  {:else}
-    <div class="list" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
-      {#each records as record}
-        <div class="record">
-          <div class="record-header">
-            <span class="mode">{modeLabel(record.mode)}</span>
-            <span class="date">{formatDate(record.playedAt)}</span>
+  <div class="screen-body">
+    {#if records.length === 0}
+      <p class="empty" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
+        Nenhuma partida registrada ainda.
+      </p>
+    {:else}
+      <div class="list" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
+        {#each records as record}
+          <div class="record">
+            <div class="record-header">
+              <span class="mode">{modeLabel(record.mode)}</span>
+              <span class="date">{formatDate(record.playedAt)}</span>
+            </div>
+            <div class="score-row">
+              <span class="team-score red">
+                <span class="team-dot red-dot"></span>
+                {record.scoreRed}
+              </span>
+              <span class="vs">×</span>
+              <span class="team-score blue">
+                {record.scoreBlue}
+                <span class="team-dot blue-dot"></span>
+              </span>
+            </div>
+            <div class="winner-line">{winnerText(record)}</div>
           </div>
-          <div class="score-row">
-            <span class="team-score red">
-              <span class="team-dot red-dot"></span>
-              {record.scoreRed}
-            </span>
-            <span class="vs">×</span>
-            <span class="team-score blue">
-              {record.scoreBlue}
-              <span class="team-dot blue-dot"></span>
-            </span>
-          </div>
-          <div class="winner-line">{winnerText(record)}</div>
-        </div>
-      {/each}
-    </div>
-  {/if}
+        {/each}
+      </div>
+    {/if}
+  </div>
 
-  <button class="btn-back" onclick={goBack} in:fly={{ y: 16, duration: 250, delay: 200, opacity: 0 }}>
+  <button class="btn-back" onclick={goBack}>
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
       <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
@@ -73,12 +75,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
-    height: 100%;
-    padding: 24px;
-    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
     width: 100%;
     max-width: 440px;
+    padding: 24px;
+    gap: 24px;
   }
 
   h2 {
@@ -87,6 +89,17 @@
     font-size: 28px;
     color: var(--ink);
     margin: 0;
+    flex-shrink: 0;
+  }
+
+  .screen-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .empty {

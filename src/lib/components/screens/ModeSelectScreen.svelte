@@ -33,63 +33,63 @@
 <div class="screen">
   <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Modo de jogo</h2>
 
-  <div class="modes" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
-    <button class="mode-card" onclick={selectSingle}>
-      <span class="icon">
-        <svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
-          <rect x="4" y="8" width="40" height="32" rx="4" fill="var(--felt)" stroke="var(--wood-dk)" stroke-width="1.5"/>
-          <circle cx="24" cy="24" r="10" fill="var(--cream)" stroke="var(--ink)" stroke-width="1"/>
-          <circle cx="24" cy="24" r="6" fill="var(--red)" opacity="0.9"/>
-          <text x="24" y="27" text-anchor="middle" fill="var(--cream)" font-size="7" font-family="sans-serif" font-weight="bold">IA</text>
-        </svg>
-      </span>
-      <span class="label">1 Jogador</span>
-      <span class="desc">Vs. IA</span>
-    </button>
+  <div class="screen-body">
+    <div class="modes" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
+      <button class="mode-card" onclick={selectSingle}>
+        <span class="icon">
+          <svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
+            <rect x="4" y="8" width="40" height="32" rx="4" fill="var(--felt)" stroke="var(--wood-dk)" stroke-width="1.5"/>
+            <circle cx="24" cy="24" r="10" fill="var(--cream)" stroke="var(--ink)" stroke-width="1"/>
+            <circle cx="24" cy="24" r="6" fill="var(--red)" opacity="0.9"/>
+            <text x="24" y="27" text-anchor="middle" fill="var(--cream)" font-size="7" font-family="sans-serif" font-weight="bold">IA</text>
+          </svg>
+        </span>
+        <span class="label">1 Jogador</span>
+        <span class="desc">Vs. IA</span>
+      </button>
+      <button class="mode-card" onclick={selectLocal}>
+        <span class="icon">
+          <svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
+            <rect x="4" y="8" width="40" height="32" rx="4" fill="var(--felt)" stroke="var(--wood-dk)" stroke-width="1.5"/>
+            <circle cx="16" cy="24" r="7" fill="#b23a34" stroke="var(--cream)" stroke-width="1"/>
+            <circle cx="32" cy="24" r="7" fill="#2f4b73" stroke="var(--cream)" stroke-width="1"/>
+            <text x="16" y="27" text-anchor="middle" fill="var(--cream)" font-size="6" font-family="sans-serif" font-weight="bold">1</text>
+            <text x="32" y="27" text-anchor="middle" fill="var(--cream)" font-size="6" font-family="sans-serif" font-weight="bold">2</text>
+          </svg>
+        </span>
+        <span class="label">2 Jogadores</span>
+        <span class="desc">Local</span>
+      </button>
+      <button class="mode-card daily" onclick={selectDaily}>
+        <span class="icon">
+          <svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
+            <path d="M12 6v4c0 4-2 8-6 10v2c0 4 4 8 8 8h20c4 0 8-4 8-8v-2c-4-2-6-6-6-10V6H12z" fill="#d9a441" stroke="#b8860b" stroke-width="1.5"/>
+            <rect x="17" y="26" width="14" height="4" rx="1" fill="#2a231b"/>
+            <rect x="14" y="30" width="20" height="3" rx="1" fill="#2a231b"/>
+          </svg>
+        </span>
+        <span class="label">Desafio Diário</span>
+        <span class="desc">Difícil</span>
+      </button>
+    </div>
 
-    <button class="mode-card" onclick={selectLocal}>
-      <span class="icon">
-        <svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
-          <rect x="4" y="8" width="40" height="32" rx="4" fill="var(--felt)" stroke="var(--wood-dk)" stroke-width="1.5"/>
-          <circle cx="16" cy="24" r="7" fill="#b23a34" stroke="var(--cream)" stroke-width="1"/>
-          <circle cx="32" cy="24" r="7" fill="#2f4b73" stroke="var(--cream)" stroke-width="1"/>
-          <text x="16" y="27" text-anchor="middle" fill="var(--cream)" font-size="6" font-family="sans-serif" font-weight="bold">1</text>
-          <text x="32" y="27" text-anchor="middle" fill="var(--cream)" font-size="6" font-family="sans-serif" font-weight="bold">2</text>
-        </svg>
-      </span>
-      <span class="label">2 Jogadores</span>
-      <span class="desc">Local</span>
-    </button>
-
-    <button class="mode-card daily" onclick={selectDaily}>
-      <span class="icon">
-        <svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
-          <path d="M12 6v4c0 4-2 8-6 10v2c0 4 4 8 8 8h20c4 0 8-4 8-8v-2c-4-2-6-6-6-10V6H12z" fill="#d9a441" stroke="#b8860b" stroke-width="1.5"/>
-          <rect x="17" y="26" width="14" height="4" rx="1" fill="#2a231b"/>
-          <rect x="14" y="30" width="20" height="3" rx="1" fill="#2a231b"/>
-        </svg>
-      </span>
-      <span class="label">Desafio Diário</span>
-      <span class="desc">Difícil</span>
-    </button>
-  </div>
-
-  <div class="difficulty-section" in:fly={{ y: 16, duration: 250, delay: 200, opacity: 0 }}>
-    <p class="diff-label">Dificuldade da IA (1 Jogador):</p>
-    <div class="diff-buttons">
-      {#each ['easy', 'medium', 'hard'] as d}
-        <button
-          class="diff-btn"
-          class:selected={selectedDifficulty === d}
-          onclick={() => selectedDifficulty = d as Difficulty}
-        >
-          {difficultyLabel(d as Difficulty)}
-        </button>
-      {/each}
+    <div class="difficulty-section" in:fly={{ y: 16, duration: 250, delay: 200, opacity: 0 }}>
+      <p class="diff-label">Dificuldade da IA (1 Jogador):</p>
+      <div class="diff-buttons">
+        {#each ['easy', 'medium', 'hard'] as d}
+          <button
+            class="diff-btn"
+            class:selected={selectedDifficulty === d}
+            onclick={() => selectedDifficulty = d as Difficulty}
+          >
+            {difficultyLabel(d as Difficulty)}
+          </button>
+        {/each}
+      </div>
     </div>
   </div>
 
-  <button class="btn-back" onclick={goBack} in:fly={{ y: 16, duration: 250, delay: 300, opacity: 0 }}>
+  <button class="btn-back" onclick={goBack}>
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
       <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
@@ -102,12 +102,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
-    height: 100%;
-    padding: 24px;
-    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
     width: 100%;
     max-width: 440px;
+    padding: 24px;
+    gap: 24px;
   }
 
   h2 {
@@ -116,6 +116,18 @@
     font-size: 28px;
     color: var(--ink);
     margin: 0;
+    flex-shrink: 0;
+  }
+
+  .screen-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
   }
 
   .modes {
@@ -209,10 +221,6 @@
     border-color: var(--mustard);
     color: var(--ink);
   }
-  .diff-btn:hover {
-    background: var(--paper);
-  }
-  .diff-btn.selected:hover {
-    background: var(--mustard);
-  }
+  .diff-btn:hover { background: var(--paper); }
+  .diff-btn.selected:hover { background: var(--mustard); }
 </style>
