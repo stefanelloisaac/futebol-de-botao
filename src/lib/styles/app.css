@@ -1,0 +1,340 @@
+:root {
+	--felt: #3d6b47;
+	--felt-dk: #2c5236;
+	--wood: #7a4d2b;
+	--wood-dk: #5c3820;
+	--wood-lt: #9a6638;
+	--cream: #f2e7cf;
+	--line: #efe4c9;
+	--red: #b23a34;
+	--red-dk: #872822;
+	--blue: #2f4b73;
+	--blue-dk: #1e3350;
+	--ink: #2a231b;
+	--mustard: #d9a441;
+	--paper: #e6d9bf;
+}
+
+* {
+	box-sizing: border-box;
+	-webkit-tap-highlight-color: transparent;
+}
+html,
+body {
+	margin: 0;
+	height: 100%;
+}
+body {
+	font-family: 'Oswald', sans-serif;
+	color: var(--ink);
+	background-color: #dccba6;
+	background-image:
+		radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.25), transparent 60%),
+		radial-gradient(rgba(120, 90, 50, 0.18) 1px, transparent 1.4px);
+	background-size:
+		auto,
+		7px 7px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+	height: 100dvh;
+	padding: 8px 10px;
+	overflow: hidden;
+}
+body::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 999;
+	opacity: 0.5;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+.wrap {
+	width: 100%;
+	max-width: 440px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+.title,
+.board,
+.ctrls,
+.hint {
+	flex: 0 0 auto;
+}
+
+.title {
+	text-align: center;
+	margin: 0 0 8px;
+}
+.title h1 {
+	font-family: 'Ultra', serif;
+	font-weight: 400;
+	margin: 0;
+	font-size: clamp(30px, 9.5vw, 46px);
+	line-height: 0.92;
+	letter-spacing: 0.5px;
+	color: var(--red);
+	text-shadow:
+		2px 2px 0 var(--ink),
+		4px 4px 0 rgba(0, 0, 0, 0.15);
+	-webkit-text-stroke: 0.5px var(--ink);
+}
+.title h1 .b {
+	color: var(--blue);
+}
+.title .sub {
+	display: inline-block;
+	margin-top: 6px;
+	font-weight: 600;
+	letter-spacing: 4px;
+	font-size: 11px;
+	text-transform: uppercase;
+	color: var(--ink);
+	background: var(--mustard);
+	padding: 3px 12px;
+	border: 2px solid var(--ink);
+	transform: rotate(-1.2deg);
+	box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.board {
+	display: flex;
+	align-items: stretch;
+	justify-content: space-between;
+	background: linear-gradient(180deg, var(--wood-lt), var(--wood) 55%, var(--wood-dk));
+	border: 3px solid var(--ink);
+	border-radius: 10px;
+	padding: 8px;
+	margin-bottom: 10px;
+	gap: 8px;
+	box-shadow:
+		0 5px 0 rgba(0, 0, 0, 0.28),
+		inset 0 2px 3px rgba(255, 255, 255, 0.18);
+}
+.team {
+	flex: 1;
+	text-align: center;
+	background: var(--cream);
+	border: 2px solid var(--ink);
+	border-radius: 6px;
+	padding: 5px 4px 3px;
+	position: relative;
+}
+.team .nm {
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-size: 13px;
+}
+.team.red .nm {
+	color: var(--red);
+}
+.team.blue .nm {
+	color: var(--blue);
+}
+.team .sc {
+	font-family: 'Ultra', serif;
+	font-size: 34px;
+	line-height: 1;
+	color: var(--ink);
+}
+.team .lamp {
+	position: absolute;
+	top: 5px;
+	right: 6px;
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+	background: #7a6f5a;
+	border: 1.5px solid var(--ink);
+	transition: 0.2s;
+}
+.team.active .lamp {
+	background: var(--mustard);
+	box-shadow: 0 0 8px 2px rgba(217, 164, 65, 0.9);
+}
+.turn {
+	align-self: center;
+	text-align: center;
+	min-width: 78px;
+}
+.turn .lbl {
+	font-size: 9px;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: var(--cream);
+	opacity: 0.8;
+}
+.turn .who {
+	font-family: 'Ultra', serif;
+	font-size: 15px;
+	color: var(--cream);
+	line-height: 1.1;
+}
+.turn .who.red {
+	color: #f0b3ae;
+}
+.turn .who.blue {
+	color: #a9c2e8;
+}
+
+.stage {
+	position: relative;
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.stage canvas {
+	display: block;
+	aspect-ratio: 400 / 660;
+	max-height: 100%;
+	max-width: 100%;
+	width: auto;
+	height: auto;
+	margin: auto;
+	border-radius: 12px;
+	touch-action: none;
+	box-shadow:
+		0 8px 0 rgba(0, 0, 0, 0.3),
+		0 14px 26px rgba(0, 0, 0, 0.3);
+}
+.stage.shake {
+	animation: shk 0.35s;
+}
+@keyframes shk {
+	0%,
+	100% {
+		transform: translate(0, 0);
+	}
+	20% {
+		transform: translate(-4px, 3px);
+	}
+	40% {
+		transform: translate(5px, -2px);
+	}
+	60% {
+		transform: translate(-3px, -3px);
+	}
+	80% {
+		transform: translate(3px, 2px);
+	}
+}
+
+.gol {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	opacity: 0;
+}
+.gol.show {
+	animation: golpop 1.4s ease;
+}
+.gol span {
+	font-family: 'Ultra', serif;
+	font-size: clamp(40px, 16vw, 70px);
+	color: var(--mustard);
+	-webkit-text-stroke: 3px var(--ink);
+	text-shadow: 5px 6px 0 rgba(0, 0, 0, 0.35);
+	transform: rotate(-6deg);
+}
+@keyframes golpop {
+	0% {
+		opacity: 0;
+		transform: scale(0.4);
+	}
+	15% {
+		opacity: 1;
+		transform: scale(1.15);
+	}
+	30% {
+		transform: scale(1);
+	}
+	80% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		transform: scale(1.05);
+	}
+}
+
+.ctrls {
+	display: flex;
+	gap: 8px;
+	margin-top: 10px;
+}
+.btn {
+	flex: 1;
+	font-family: 'Oswald', sans-serif;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-size: 13px;
+	color: var(--cream);
+	cursor: pointer;
+	background: linear-gradient(180deg, var(--wood-lt), var(--wood-dk));
+	border: 2.5px solid var(--ink);
+	border-radius: 8px;
+	padding: 11px 8px;
+	box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+	transition:
+		transform 0.05s,
+		box-shadow 0.05s;
+	user-select: none;
+}
+.btn:active {
+	transform: translateY(3px);
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+.btn.on {
+	background: linear-gradient(180deg, #e2b25a, var(--mustard));
+	color: var(--ink);
+}
+
+.hint {
+	text-align: center;
+	margin: 9px 0 0;
+	font-size: 12.5px;
+	color: #6b5a3e;
+	letter-spacing: 0.3px;
+}
+.hint b {
+	color: var(--ink);
+}
+
+@media (max-height: 760px) {
+	.title {
+		margin-bottom: 5px;
+	}
+	.title .sub {
+		display: none;
+	}
+	.board {
+		margin-bottom: 6px;
+		padding: 6px;
+	}
+	.team .sc {
+		font-size: 28px;
+	}
+	.hint {
+		margin-top: 6px;
+		font-size: 11.5px;
+	}
+}
+@media (max-height: 620px) {
+	.hint {
+		display: none;
+	}
+	.title h1 {
+		font-size: 26px;
+	}
+}
