@@ -5,12 +5,18 @@
 
 export type TeamId = 'red' | 'blue';
 
-/** The match is either waiting for a shot ('aim') or letting bodies settle ('resolving'). */
-export type MatchPhase = 'aim' | 'resolving';
+/** The match is either waiting for a shot ('aim'), letting bodies settle ('resolving'),
+ *  or finished when a team reaches the target goal count. */
+export type MatchPhase = 'aim' | 'resolving' | 'finished';
+
+export interface MatchConfig {
+  /** Number of goals required to win the match. */
+  targetGoals: number;
+}
 
 export interface Vec2 {
-	x: number;
-	y: number;
+  x: number;
+  y: number;
 }
 
 /**
@@ -19,30 +25,31 @@ export interface Vec2 {
  * authoritative server for online PvP.
  */
 export interface ShotCommand {
-	team: TeamId;
-	discId: number;
-	velocity: Vec2;
+  team: TeamId;
+  discId: number;
+  velocity: Vec2;
 }
 
 export interface DiscView {
-	id: number;
-	team: TeamId;
-	keeper: boolean;
-	position: Vec2;
-	radius: number;
+  id: number;
+  team: TeamId;
+  keeper: boolean;
+  position: Vec2;
+  radius: number;
 }
 
 export interface BallView {
-	position: Vec2;
-	radius: number;
+  position: Vec2;
+  radius: number;
 }
 
 /** An immutable read-model of the match, produced for rendering and input. */
 export interface MatchSnapshot {
-	discs: DiscView[];
-	ball: BallView;
-	scoreRed: number;
-	scoreBlue: number;
-	activeTeam: TeamId;
-	phase: MatchPhase;
+  discs: DiscView[];
+  ball: BallView;
+  scoreRed: number;
+  scoreBlue: number;
+  activeTeam: TeamId;
+  phase: MatchPhase;
+  winner: TeamId | null;
 }
