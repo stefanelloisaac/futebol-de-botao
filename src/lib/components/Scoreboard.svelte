@@ -13,14 +13,18 @@
     golFlash: 'red' | 'blue' | null;
   } = $props();
 
-  let prevRed = $state(scoreRed);
-  let prevBlue = $state(scoreBlue);
-  let redBump = $derived(scoreRed > prevRed);
-  let blueBump = $derived(scoreBlue > prevBlue);
+  let prevRed = $state<number>(0);
+  let prevBlue = $state<number>(0);
+  let redBump = $state(false);
+  let blueBump = $state(false);
 
   $effect(() => {
-    prevRed = scoreRed;
-    prevBlue = scoreBlue;
+    const r = scoreRed;
+    const b = scoreBlue;
+    redBump = r > prevRed;
+    blueBump = b > prevBlue;
+    prevRed = r;
+    prevBlue = b;
   });
 </script>
 
@@ -68,21 +72,19 @@
     background: rgba(0,0,0,0.06);
   }
   .team.gol {
-    animation: golPulse 0.8s ease-out;
+    animation: golFlash 0.5s ease-out;
   }
-
-  @keyframes golPulse {
-    0% { background: rgba(217, 164, 65, 0.5); }
+  @keyframes golFlash {
+    0% { background: rgba(217,164,65,0.5); }
     100% { background: transparent; }
   }
 
   .lamp {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: transparent;
     transition: background 0.2s;
-    flex-shrink: 0;
   }
   .team.active .lamp {
     background: var(--mustard);
@@ -91,58 +93,40 @@
 
   .nm {
     font-family: 'Oswald', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--wood-dk);
-  }
-  .team.active .nm {
-    color: var(--ink);
     font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
   }
 
   .sc {
     font-family: 'Ultra', serif;
-    font-weight: 400;
-    font-size: 26px;
-    line-height: 1;
+    font-size: 22px;
     color: var(--ink);
-    min-width: 24px;
-    text-align: center;
-    transition: transform 0.15s;
+    transition: transform 0.12s;
   }
   .sc.bump {
-    animation: bump 0.3s ease-out;
+    animation: bump 0.25s ease-out;
   }
-
   @keyframes bump {
     0% { transform: scale(1.4); }
     100% { transform: scale(1); }
   }
 
   .turn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
+    text-align: center;
+    padding: 0 8px;
   }
-  .turn .lbl {
-    font-size: 9px;
+  .lbl {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--wood-dk);
-    font-family: 'Oswald', sans-serif;
-    font-weight: 400;
+    color: var(--wood);
   }
-  .turn .who {
-    font-family: 'Oswald', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: color 0.2s;
+  .who {
+    font-family: 'Ultra', serif;
+    font-size: 16px;
   }
-  .turn .who.red { color: var(--red); }
-  .turn .who.blue { color: var(--blue); }
+  .who.red { color: var(--red); }
+  .who.blue { color: var(--blue); }
 </style>

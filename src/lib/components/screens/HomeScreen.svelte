@@ -101,9 +101,7 @@
     color: var(--ink);
     text-align: center;
   }
-  .logo .b {
-    color: var(--mustard);
-  }
+  /* .logo .b intentionally removed — title uses SVG, not text */
   .logo .sub {
     font-family: 'Oswald', sans-serif;
     font-size: 14px;

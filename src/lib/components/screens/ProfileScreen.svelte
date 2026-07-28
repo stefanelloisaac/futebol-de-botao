@@ -7,7 +7,7 @@
   let profile = $state(container.profile.getProfile());
   let stats = $state<Stats>(container.stats.getStats());
   let editing = $state(false);
-  let editName = $state(profile.name);
+  let editName = $state(container.profile.getProfile().name);
 
   function saveName(): void {
     const trimmed = editName.trim();
@@ -53,7 +53,7 @@
     {:else}
       <div class="name-row">
         <span class="name">{profile.name}</span>
-        <button class="edit-btn" onclick={() => editing = true}>
+        <button class="edit-btn" onclick={() => editing = true} aria-label="Editar nome">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
             <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
           </svg>
