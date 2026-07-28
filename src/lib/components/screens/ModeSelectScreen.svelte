@@ -89,7 +89,12 @@
     </div>
   </div>
 
-  <button class="back-btn" onclick={goBack} in:fly={{ y: 16, duration: 250, delay: 300, opacity: 0 }}>Voltar</button>
+  <button class="btn-back" onclick={goBack} in:fly={{ y: 16, duration: 250, delay: 300, opacity: 0 }}>
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Voltar
+  </button>
 </div>
 
 <style>
@@ -212,22 +217,5 @@
 
   .diff-btn.selected:hover {
     background: var(--mustard);
-  }
-
-  .back-btn {
-    font-family: 'Oswald', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    padding: 10px 28px;
-    min-height: 44px;
-    background: var(--cream);
-    border: 2px solid var(--ink);
-    border-radius: 8px;
-    color: var(--ink);
-    cursor: pointer;
-    margin-top: 6px;
-  }
-  .back-btn:active {
-    transform: translateY(2px);
   }
 </style>

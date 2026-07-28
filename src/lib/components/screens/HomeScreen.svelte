@@ -54,16 +54,16 @@
   </div>
 
   <div class="menu" in:fly={{ y: 20, duration: 300, delay: 120, opacity: 0 }}>
-    <button class="btn primary" onclick={play}>JOGAR</button>
-    <button class="btn" onclick={openProfile}>Perfil</button>
-    <button class="btn" onclick={openRanking}>Ranking</button>
-    <button class="btn" onclick={openHistory}>Histórico</button>
-    <button class="btn" onclick={openSettings}>Configurações</button>
+    <button class="btn-primary" onclick={play}>JOGAR</button>
+    <button class="btn-secondary" onclick={openProfile}>Perfil</button>
+    <button class="btn-secondary" onclick={openRanking}>Ranking</button>
+    <button class="btn-secondary" onclick={openHistory}>Histórico</button>
+    <button class="btn-secondary" onclick={openSettings}>Configurações</button>
   </div>
 
   <div class="howto" in:fly={{ y: 20, duration: 300, delay: 200, opacity: 0 }}>
     <h3>Como jogar</h3>
-    <p>Arraste para trás e solte para chutar o botão na direção da bola. Marque {3} gols para vencer!</p>
+    <p>Arraste para trás e solte para chutar o botão na direção da bola. Marque 3 gols para vencer!</p>
   </div>
 </div>
 
@@ -101,7 +101,6 @@
     color: var(--ink);
     text-align: center;
   }
-  /* .logo .b intentionally removed — title uses SVG, not text */
   .logo .sub {
     font-family: 'Oswald', sans-serif;
     font-size: 14px;
@@ -120,44 +119,18 @@
     max-width: 260px;
   }
 
-  .btn {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-    padding: 12px 0;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background: var(--cream);
-    color: var(--ink);
-    box-shadow: 0 3px 0 rgba(0,0,0,0.12);
-    transition: transform 0.08s, box-shadow 0.08s;
-    width: 100%;
-  }
-  .btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 rgba(0,0,0,0.12);
-  }
-  .btn.primary {
-    background: var(--mustard);
-    color: #1a150f;
-  }
-
   .howto {
     text-align: center;
     max-width: 320px;
     font-family: 'Oswald', sans-serif;
     font-size: 15px;
     color: var(--wood-dk);
-    line-height: 1.5;
   }
   .howto h3 {
-    font-weight: 600;
-    font-size: 17px;
+    font-family: 'Ultra', serif;
+    font-weight: 400;
     color: var(--ink);
-    margin: 0 0 6px;
-  }
-  .howto p {
-    margin: 0;
+    margin: 0 0 4px;
+    font-size: 18px;
   }
 </style>

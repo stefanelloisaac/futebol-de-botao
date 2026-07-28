@@ -35,7 +35,7 @@
       onCollision: () => oncollision?.()
     });
     client.start();
-    return () => client?.stop();
+    return () => client?.destroy();
   });
 
   export function restart(): void {
@@ -60,3 +60,13 @@
 </script>
 
 <canvas bind:this={canvas}></canvas>
+
+<style>
+  canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+  }
+</style>

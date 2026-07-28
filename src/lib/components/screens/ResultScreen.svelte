@@ -47,8 +47,8 @@
   {/if}
 
   <div class="actions" in:fly={{ y: 16, duration: 300, delay: 450, opacity: 0 }}>
-    <button class="btn primary" onclick={rematch}>Revanche</button>
-    <button class="btn" onclick={goHome}>Menu</button>
+    <button class="btn-primary" onclick={rematch}>Revanche</button>
+    <button class="btn-secondary" onclick={goHome}>Menu</button>
   </div>
 </div>
 
@@ -143,28 +143,5 @@
     gap: 10px;
     width: 100%;
     max-width: 260px;
-  }
-
-  .btn {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 600;
-    font-size: 20px;
-    padding: 14px 0;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background: var(--cream);
-    color: var(--ink);
-    box-shadow: 0 3px 0 rgba(0,0,0,0.12);
-    transition: transform 0.08s, box-shadow 0.08s;
-    width: 100%;
-  }
-  .btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 rgba(0,0,0,0.12);
-  }
-  .btn.primary {
-    background: var(--mustard);
-    color: #1a150f;
   }
 </style>

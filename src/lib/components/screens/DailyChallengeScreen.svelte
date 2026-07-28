@@ -23,7 +23,7 @@
 </script>
 
 <div class="daily">
-  <button class="back" onclick={goBack}>
+  <button class="btn-back" onclick={goBack}>
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
       <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
@@ -42,7 +42,7 @@
       </svg>
     </div>
 
-    <p class="desc">Vença a IA no nível <strong>Difícil</strong> em uma partida de {challenge.config.targetGoals} gols!</p>
+    <p class="desc">Vença uma partida no modo difícil com condições especiais.</p>
 
     <div class="info">
       <span class="info-item">
@@ -65,7 +65,7 @@
     {/if}
   </div>
 
-  <button class="play-btn" onclick={playChallenge} in:fly={{ y: 16, duration: 250, delay: 200, opacity: 0 }}>
+  <button class="btn-primary" onclick={playChallenge} in:fly={{ y: 16, duration: 250, delay: 200, opacity: 0 }}>
     Jogar Desafio
   </button>
 </div>
@@ -77,39 +77,24 @@
     align-items: center;
     gap: 1rem;
     padding: 1.5rem;
-  }
-
-  .back {
-    align-self: flex-start;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--cream);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-
-  .back:hover {
-    background: var(--surface-hover);
+    width: 100%;
+    max-width: 400px;
   }
 
   h2 {
     margin: 0;
-    color: var(--cream);
-    font-size: 1.5rem;
+    color: var(--ink);
+    font-family: 'Ultra', serif;
+    font-weight: 400;
+    font-size: 1.6rem;
   }
 
   .card {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     border-radius: 14px;
     padding: 1.5rem;
     width: 100%;
-    max-width: 360px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -121,11 +106,11 @@
   }
 
   .desc {
-    color: var(--cream);
+    margin: 0;
     text-align: center;
+    color: var(--ink);
     font-size: 0.95rem;
     line-height: 1.4;
-    margin: 0;
   }
 
   .info {
@@ -143,14 +128,14 @@
   .info-label {
     font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     color: var(--cream-50);
   }
 
   .info-value {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    color: var(--cream);
+    color: var(--ink);
   }
 
   .best-result {
@@ -158,37 +143,23 @@
     flex-direction: column;
     align-items: center;
     gap: 0.2rem;
-    padding: 0.5rem 1rem;
-    background: rgba(217, 164, 65, 0.1);
-    border: 1px solid var(--gold);
+    padding: 0.6rem 1rem;
+    background: var(--mustard);
     border-radius: 8px;
+    width: 100%;
   }
 
   .best-label {
     font-size: 0.75rem;
-    color: var(--cream-50);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    opacity: 0.7;
   }
 
   .best-score {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--gold);
-  }
-
-  .play-btn {
-    background: var(--gold);
-    border: none;
-    color: var(--bg);
-    padding: 0.8rem 2rem;
-    border-radius: 10px;
-    font-size: 1.05rem;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  .play-btn:hover {
-    opacity: 0.9;
+    font-family: 'Ultra', serif;
+    font-size: 1.4rem;
+    color: var(--ink);
   }
 </style>

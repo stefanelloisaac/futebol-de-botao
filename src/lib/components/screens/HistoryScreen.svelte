@@ -29,7 +29,7 @@
 </script>
 
 <div class="history">
-  <button class="back" onclick={goBack}>
+  <button class="btn-back" onclick={goBack}>
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
       <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
@@ -75,41 +75,27 @@
     align-items: center;
     gap: 1rem;
     padding: 1.5rem;
-  }
-
-  .back {
-    align-self: flex-start;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--cream);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-
-  .back:hover {
-    background: var(--surface-hover);
+    width: 100%;
+    max-width: 420px;
   }
 
   h2 {
     margin: 0;
-    color: var(--cream);
-    font-size: 1.5rem;
+    color: var(--ink);
+    font-family: 'Ultra', serif;
+    font-weight: 400;
+    font-size: 1.6rem;
   }
 
   .empty {
     color: var(--cream-50);
     text-align: center;
     margin-top: 2rem;
+    font-size: 1rem;
   }
 
   .list {
     width: 100%;
-    max-width: 400px;
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
@@ -117,7 +103,7 @@
 
   .record {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     border-radius: 10px;
     padding: 0.8rem 1rem;
   }
@@ -129,14 +115,15 @@
   }
 
   .mode {
-    font-size: 0.8rem;
-    color: var(--cream-50);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--wood-dk);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.5px;
   }
 
   .date {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--cream-50);
   }
 
@@ -144,9 +131,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    font-size: 1.4rem;
-    font-weight: 700;
+    gap: 1.2rem;
+    font-family: 'Ultra', serif;
+    font-size: 1.8rem;
+    color: var(--ink);
   }
 
   .team-score {
@@ -155,38 +143,28 @@
     gap: 0.4rem;
   }
 
-  .team-score.red {
-    color: var(--red);
-  }
-
-  .team-score.blue {
-    color: var(--blue);
-  }
-
   .team-dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
     display: inline-block;
   }
-
-  .red-dot {
-    background: var(--red);
-  }
-
-  .blue-dot {
-    background: var(--blue);
-  }
+  .red-dot { background: var(--red); }
+  .blue-dot { background: var(--blue); }
 
   .vs {
     color: var(--cream-50);
-    font-weight: 400;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
   }
 
   .winner-line {
     text-align: center;
     font-size: 0.8rem;
-    color: var(--cream-50);
-    margin-top: 0.2rem;
+    font-weight: 600;
+    color: var(--wood-dk);
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 </style>

@@ -34,7 +34,7 @@
 </script>
 
 <div class="profile">
-  <button class="back" onclick={goBack}>
+  <button class="btn-back" onclick={goBack}>
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
       <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
@@ -47,8 +47,8 @@
     {#if editing}
       <div class="edit-row">
         <input type="text" bind:value={editName} class="name-input" placeholder="Seu apelido" maxlength="20" />
-        <button class="save-btn" onclick={saveName}>Salvar</button>
-        <button class="cancel-btn" onclick={() => { editing = false; editName = profile.name; }}>Cancelar</button>
+        <button class="btn-primary" onclick={saveName} style="padding:0.5rem 1rem;min-height:40px;font-size:0.9rem">Salvar</button>
+        <button class="btn-secondary" onclick={() => { editing = false; editName = profile.name; }} style="padding:0.5rem 0.75rem;min-height:40px;font-size:0.9rem">Cancelar</button>
       </div>
     {:else}
       <div class="name-row">
@@ -89,21 +89,19 @@
     </div>
     <div class="stat-card">
       <span class="stat-value">{stats.currentStreak}</span>
-      <span class="stat-label">Sequência Atual</span>
+      <span class="stat-label">Sequência</span>
     </div>
     <div class="stat-card">
       <span class="stat-value">{bestStreak}</span>
-      <span class="stat-label">Melhor Sequência</span>
+      <span class="stat-label">Melhor Seq.</span>
     </div>
     <div class="stat-card">
       <span class="stat-value">{stats.totalShots}</span>
-      <span class="stat-label">Total de Chutes</span>
+      <span class="stat-label">Chutes</span>
     </div>
   </div>
 
-  <button class="reset-btn" onclick={resetStats}>
-    Zerar estatísticas
-  </button>
+  <button class="btn-danger" onclick={resetStats}>Zerar estatísticas</button>
 </div>
 
 <style>
@@ -113,39 +111,24 @@
     align-items: center;
     gap: 1rem;
     padding: 1.5rem;
-  }
-
-  .back {
-    align-self: flex-start;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--cream);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-
-  .back:hover {
-    background: var(--surface-hover);
+    width: 100%;
+    max-width: 400px;
   }
 
   h2 {
     margin: 0;
-    color: var(--cream);
-    font-size: 1.5rem;
+    color: var(--ink);
+    font-family: 'Ultra', serif;
+    font-weight: 400;
+    font-size: 1.6rem;
   }
 
   .card {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     border-radius: 12px;
     padding: 1.2rem 1.5rem;
     width: 100%;
-    max-width: 340px;
   }
 
   .name-row {
@@ -156,7 +139,7 @@
 
   .name {
     font-size: 1.2rem;
-    color: var(--cream);
+    color: var(--ink);
     font-weight: 600;
   }
 
@@ -170,7 +153,7 @@
   }
 
   .edit-btn:hover {
-    color: var(--cream);
+    color: var(--ink);
     background: var(--surface-hover);
   }
 
@@ -185,30 +168,12 @@
     flex: 1;
     min-width: 140px;
     background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--cream);
+    border: 2px solid var(--border);
+    color: var(--ink);
     padding: 0.5rem 0.75rem;
     border-radius: 6px;
     font-size: 1rem;
-  }
-
-  .save-btn {
-    background: var(--green);
-    border: none;
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-  }
-
-  .cancel-btn {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--cream-50);
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    cursor: pointer;
+    font-family: 'Oswald', sans-serif;
   }
 
   .stats-grid {
@@ -216,12 +181,11 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 0.6rem;
     width: 100%;
-    max-width: 340px;
   }
 
   .stat-card {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     border-radius: 10px;
     padding: 0.8rem 0.5rem;
     display: flex;
@@ -233,7 +197,7 @@
   .stat-value {
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--cream);
+    color: var(--ink);
   }
 
   .stat-label {
@@ -242,21 +206,5 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
     text-align: center;
-  }
-
-  .reset-btn {
-    background: transparent;
-    border: 1px solid var(--red);
-    color: var(--red);
-    padding: 0.5rem 1.2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-  }
-
-  .reset-btn:hover {
-    background: var(--red);
-    color: #fff;
   }
 </style>

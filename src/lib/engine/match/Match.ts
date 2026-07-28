@@ -11,6 +11,10 @@ import { createWorld, type PhysicsWorld } from '../physics/world';
 
 const { Body, Engine, Events } = Matter;
 
+function other(team: TeamId): TeamId {
+  return team === 'red' ? 'blue' : 'red';
+}
+
 export interface MatchEvents {
   /** Fired when a team scores. `scorer` is the team that earned the point. */
   onGoal?: (scorer: TeamId) => void;
@@ -22,10 +26,6 @@ export interface MatchEvents {
   onShot?: (team: TeamId) => void;
   /** Fired on any disc-disc or disc-ball collision. */
   onCollision?: () => void;
-}
-
-function other(team: TeamId): TeamId {
-  return team === 'red' ? 'blue' : 'red';
 }
 
 /**
@@ -46,15 +46,27 @@ export class Match {
   private settleCount = 0;
   private goalLock = 0;
   private collisionsThisStep = 0;
+  /** Last team whose disc touched the ball. Null = no disc touched it yet (direct shot). */
+  private lastTouch: TeamId | null = null;
 
   constructor(config: MatchConfig, events: MatchEvents = {}) {
     this.config = config;
     this.world = createWorld();
     this.events = events;
 
-    // Listen for collisions
-    Events.on(this.world.engine, 'collisionStart', () => {
+    // Listen for collisions + track last touch for goal attribution
+    Events.on(this.world.engine, 'collisionStart', (event) => {
       this.collisionsThisStep++;
+      for (const pair of event.pairs) {
+        const disc = this.world.discs.find(
+          (d) => d.body === pair.bodyA || d.body === pair.bodyB
+        );
+        const ballHit =
+          pair.bodyA === this.world.ball || pair.bodyB === this.world.ball;
+        if (disc && ballHit) {
+          this.lastTouch = disc.team;
+        }
+      }
     });
   }
 
@@ -114,18 +126,19 @@ export class Match {
 
     // Goal detection
     if (this.goalLock === 0) {
-      const by = this.detectGoal();
-      if (by) {
-        if (by === 'red') this.scoreRed++;
+      const scorer = this.detectGoal();
+      if (scorer) {
+        if (scorer === 'red') this.scoreRed++;
         else this.scoreBlue++;
         this.goalLock = GOAL_LOCK_FRAMES;
-        this.events.onGoal?.(by);
+        this.lastTouch = null; // reset last touch for the next play
+        this.events.onGoal?.(scorer);
 
         if (this.scoreRed >= this.config.targetGoals || this.scoreBlue >= this.config.targetGoals) {
           this.phase = 'finished';
-          this.winner = by;
+          this.winner = scorer;
           this.resetPositions();
-          this.events.onMatchEnd?.(by);
+          this.events.onMatchEnd?.(scorer);
           return;
         }
 
@@ -167,16 +180,28 @@ export class Match {
 
   private detectGoal(): TeamId | null {
     const b = this.world.ball;
-    // Red's goal is at the top (y = margin), Blue's at the bottom (y = height - margin)
     const inGoalX = Math.abs(b.position.x - FIELD.width / 2) < GOAL_GAP / 2;
+    if (!inGoalX) return null;
 
-    if (inGoalX && b.position.y <= FIELD.margin) {
-      return 'blue'; // ball entered top goal → blue conceded, red scores
+    const isBlueGoal = b.position.y <= FIELD.margin; // Top = goal do Blue
+    const isRedGoal = b.position.y >= FIELD.height - FIELD.margin; // Fundo = goal do Red
+
+    if (!isBlueGoal && !isRedGoal) return null;
+
+    // Determine scorer based on last touch
+    let scorer: TeamId;
+    if (this.lastTouch) {
+      scorer = this.lastTouch;
+      // Own goal: se o time que tocou por último é o dono do gol, inverte
+      if ((isBlueGoal && this.lastTouch === 'blue') || (isRedGoal && this.lastTouch === 'red')) {
+        scorer = other(this.lastTouch);
+      }
+    } else {
+      // Sem last touch (chute direto sem desvio) → time atacante que marcou
+      scorer = isBlueGoal ? 'red' : 'blue';
     }
-    if (inGoalX && b.position.y >= FIELD.height - FIELD.margin) {
-      return 'red'; // ball entered bottom goal → red conceded, blue scores
-    }
-    return null;
+
+    return scorer;
   }
 
   private isSettled(): boolean {

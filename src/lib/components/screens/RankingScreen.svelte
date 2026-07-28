@@ -19,7 +19,7 @@
 </script>
 
 <div class="ranking">
-  <button class="back" onclick={goBack}>
+  <button class="btn-back" onclick={goBack}>
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
       <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
@@ -52,35 +52,20 @@
     align-items: center;
     gap: 1rem;
     padding: 1.5rem;
-  }
-
-  .back {
-    align-self: flex-start;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--cream);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-
-  .back:hover {
-    background: var(--surface-hover);
+    width: 100%;
+    max-width: 420px;
   }
 
   h2 {
     margin: 0;
-    color: var(--cream);
-    font-size: 1.5rem;
+    color: var(--ink);
+    font-family: 'Ultra', serif;
+    font-weight: 400;
+    font-size: 1.6rem;
   }
 
   .list {
     width: 100%;
-    max-width: 380px;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
@@ -91,7 +76,7 @@
     align-items: center;
     gap: 0.6rem;
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     border-radius: 10px;
     padding: 0.7rem 1rem;
   }
@@ -105,7 +90,7 @@
     width: 2.2rem;
     text-align: center;
     font-weight: 700;
-    color: var(--cream);
+    color: var(--ink);
   }
 
   .medal {
@@ -118,13 +103,13 @@
 
   .name {
     flex: 1;
-    color: var(--cream);
+    color: var(--ink);
     font-weight: 500;
   }
 
   .score {
     font-weight: 700;
-    color: var(--cream);
+    color: var(--ink);
     font-variant-numeric: tabular-nums;
   }
 

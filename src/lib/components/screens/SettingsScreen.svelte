@@ -71,7 +71,7 @@
     <p class="version">v0.2.0</p>
   </div>
 
-  <button class="btn back" onclick={goBack}>Voltar</button>
+  <button class="btn-back" onclick={goBack}>Voltar</button>
 </div>
 
 <style>
@@ -199,23 +199,5 @@
   .about .version {
     font-size: 11px;
     opacity: 0.6;
-  }
-
-  .btn.back {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 500;
-    font-size: 18px;
-    padding: 10px 30px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background: transparent;
-    color: var(--wood-dk);
-    border: 1.5px solid var(--wood-lt);
-    transition: background 0.15s, color 0.15s;
-  }
-  .btn.back:hover {
-    background: var(--cream);
-    color: var(--ink);
   }
 </style>

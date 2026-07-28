@@ -40,6 +40,10 @@ export class PointerController {
 		window.removeEventListener('pointerup', this.onUp);
 	}
 
+	reset(_snapshot: MatchSnapshot): void {
+		this.selection = null;
+	}
+
 	getAim(): AimState | null {
 		if (!this.selection) return null;
 		const { sx, sy, cx, cy } = this.selection;

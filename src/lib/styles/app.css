@@ -13,6 +13,15 @@
 	--ink: #2a231b;
 	--mustard: #d9a441;
 	--paper: #e6d9bf;
+
+	/* Surface / card — mesma cor do papel para fundo de cards */
+	--surface: var(--cream);
+	--surface-hover: #e8dcc2;
+	--border: #c9b696;
+	--cream-50: #c4b694;
+	--gold: var(--mustard);
+	--green: #4a8c5a;
+	--bg: var(--paper);
 }
 
 * {
@@ -310,6 +319,104 @@ body::before {
 }
 .hint b {
 	color: var(--ink);
+}
+
+/* ── Botões padronizados para telas ── */
+
+.btn-back {
+	align-self: flex-start;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: var(--surface);
+	border: 2px solid var(--border);
+	color: var(--ink);
+	padding: 0.5rem 1.2rem;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 0.95rem;
+	font-family: 'Oswald', sans-serif;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	min-height: 44px;
+	transition: background 0.12s;
+}
+.btn-back:hover {
+	background: var(--surface-hover);
+}
+
+.btn-primary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	font-family: 'Oswald', sans-serif;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-size: 1rem;
+	min-height: 48px;
+	padding: 0.75rem 2rem;
+	border: 2.5px solid var(--ink);
+	border-radius: 8px;
+	cursor: pointer;
+	user-select: none;
+	background: linear-gradient(180deg, #e2b25a, var(--mustard));
+	color: var(--ink);
+	box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+	transition: transform 0.05s, box-shadow 0.05s;
+}
+.btn-primary:active {
+	transform: translateY(3px);
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	font-family: 'Oswald', sans-serif;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-size: 0.95rem;
+	min-height: 44px;
+	padding: 0.7rem 1.5rem;
+	border: 2.5px solid var(--ink);
+	border-radius: 8px;
+	cursor: pointer;
+	user-select: none;
+	background: var(--cream);
+	color: var(--ink);
+	box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+	transition: transform 0.05s, box-shadow 0.05s, background 0.1s;
+}
+.btn-secondary:active {
+	transform: translateY(2px);
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn-danger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'Oswald', sans-serif;
+	font-weight: 600;
+	font-size: 0.9rem;
+	min-height: 40px;
+	padding: 0.5rem 1.2rem;
+	border: 2px solid var(--red);
+	border-radius: 8px;
+	cursor: pointer;
+	background: transparent;
+	color: var(--red);
+	transition: background 0.12s, color 0.12s;
+}
+.btn-danger:hover {
+	background: var(--red);
+	color: #fff;
 }
 
 @media (max-height: 760px) {
