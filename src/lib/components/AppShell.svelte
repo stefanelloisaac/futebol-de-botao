@@ -170,4 +170,18 @@
     from { left: -40%; }
     to { left: 100%; }
   }
+
+  .shell {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .shell > div {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
 </style>
