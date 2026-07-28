@@ -3,6 +3,8 @@
   import { appState } from '$lib/app/appState.svelte';
   import { container } from '$lib/services/container';
   import type { MatchRecord } from '$lib/services/ports/MatchHistoryService';
+  import ScreenLayout from '$lib/components/ui/ScreenLayout.svelte';
+  import BackButton from '$lib/components/ui/BackButton.svelte';
 
   let records = $state<MatchRecord[]>(container.history.getAll());
 
@@ -22,16 +24,12 @@
     }
     return 'Azul venceu';
   }
-
-  function goBack(): void {
-    appState.goHome();
-  }
 </script>
 
-<div class="screen">
-  <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Histórico de Partidas</h2>
-
-  <div class="screen-body">
+<ScreenLayout title="Histórico de Partidas">
+  {#snippet footer()}
+    <BackButton />
+  {/snippet}
     {#if records.length === 0}
       <p class="empty" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
         Nenhuma partida registrada ainda.
@@ -60,48 +58,9 @@
         {/each}
       </div>
     {/if}
-  </div>
-
-  <button class="btn-back" onclick={goBack}>
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    Voltar
-  </button>
-</div>
+</ScreenLayout>
 
 <style>
-  .screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    min-height: 0;
-    width: 100%;
-    max-width: 440px;
-    padding: 24px;
-    gap: 24px;
-  }
-
-  h2 {
-    font-family: 'Ultra', serif;
-    font-weight: 400;
-    font-size: 28px;
-    color: var(--ink);
-    margin: 0;
-    flex-shrink: 0;
-  }
-
-  .screen-body {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
   .empty {
     color: var(--cream-50);
     text-align: center;
@@ -111,7 +70,7 @@
 
   .list {
     width: 100%;
-    max-width: 400px;
+    max-width: 25rem;
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
@@ -119,8 +78,8 @@
 
   .record {
     background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: 10px;
+    border: 0.125rem solid var(--border);
+    border-radius: 0.625rem;
     padding: 0.8rem 1rem;
   }
 
@@ -135,7 +94,7 @@
     font-size: 0.85rem;
     color: var(--wood-dk);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.03125em;
   }
 
   .date {
@@ -160,8 +119,8 @@
   }
 
   .team-dot {
-    width: 10px;
-    height: 10px;
+    width: 0.625rem;
+    height: 0.625rem;
     border-radius: 50%;
     display: inline-block;
   }
@@ -181,6 +140,6 @@
     color: var(--wood-dk);
     margin-top: 0.25rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.03125em;
   }
 </style>

@@ -63,13 +63,14 @@
 
 <style>
   canvas {
-    display: block;
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     touch-action: none;
-    border-radius: 12px;
+    border-radius: 0.75rem;
     box-shadow:
-      0 8px 0 rgba(0, 0, 0, 0.3),
-      0 14px 26px rgba(0, 0, 0, 0.3);
+      0 0.5rem 0 rgba(0, 0, 0, 0.3),
+      0 0.875rem 1.625rem rgba(0, 0, 0, 0.3);
   }
 </style>

@@ -27,7 +27,20 @@ export class PitchRenderer {
 	private felt = createFeltTexture();
 
 	draw(ctx: CanvasRenderingContext2D, snapshot: MatchSnapshot, aim: AimState | null): void {
-		ctx.clearRect(0, 0, W, H);
+		const dpr = window.devicePixelRatio || 1;
+		const cw = ctx.canvas.width / dpr;
+		const ch = ctx.canvas.height / dpr;
+		const scale = Math.min(cw / W, ch / H);
+		const ox = (cw - W * scale) / 2;
+		const oy = (ch - H * scale) / 2;
+
+		ctx.fillStyle = THEME.wood;
+		ctx.fillRect(0, 0, cw, ch);
+		ctx.save();
+		ctx.clearRect(0, 0, cw, ch);
+		ctx.translate(ox, oy);
+		ctx.scale(scale, scale);
+
 		this.drawWood(ctx);
 		this.drawFelt(ctx);
 		this.drawLines(ctx);
@@ -35,6 +48,8 @@ export class PitchRenderer {
 		for (const disc of snapshot.discs) this.drawDisc(ctx, disc, snapshot);
 		this.drawBall(ctx, snapshot);
 		if (aim) this.drawAim(ctx, aim);
+
+		ctx.restore();
 	}
 
 	private roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {

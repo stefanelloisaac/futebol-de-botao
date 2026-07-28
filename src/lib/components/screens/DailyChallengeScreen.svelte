@@ -3,6 +3,8 @@
   import { appState } from '$lib/app/appState.svelte';
   import { container } from '$lib/services/container';
   import type { DailyChallenge } from '$lib/services/ports/DailyChallengeService';
+  import ScreenLayout from '$lib/components/ui/ScreenLayout.svelte';
+  import BackButton from '$lib/components/ui/BackButton.svelte';
 
   let challenge = $state<DailyChallenge>(container.daily.getTodayChallenge());
   let difficultyLabel = $derived(
@@ -16,16 +18,12 @@
       difficulty: 'hard'
     });
   }
-
-  function goBack(): void {
-    appState.goHome();
-  }
 </script>
 
-<div class="screen">
-  <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Desafio Diário</h2>
-
-  <div class="screen-body">
+<ScreenLayout title="Desafio Diário">
+  {#snippet footer()}
+    <BackButton />
+  {/snippet}
     <div class="card" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
       <div class="card-icon">
         <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
@@ -57,56 +55,16 @@
     </div>
 
     <button class="btn-primary" onclick={playChallenge}>Jogar Desafio</button>
-  </div>
-
-  <button class="btn-back" onclick={goBack}>
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    Voltar
-  </button>
-</div>
+</ScreenLayout>
 
 <style>
-  .screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    min-height: 0;
-    width: 100%;
-    max-width: 440px;
-    padding: 24px;
-    gap: 24px;
-  }
-
-  h2 {
-    font-family: 'Ultra', serif;
-    font-weight: 400;
-    font-size: 28px;
-    color: var(--ink);
-    margin: 0;
-    flex-shrink: 0;
-  }
-
-  .screen-body {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-  }
-
   .card {
     background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: 14px;
+    border: 0.125rem solid var(--border);
+    border-radius: 0.875rem;
     padding: 1.5rem;
     width: 100%;
-    max-width: 360px;
+    max-width: 22.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -157,7 +115,7 @@
     gap: 0.2rem;
     padding: 0.6rem 1rem;
     background: var(--mustard);
-    border-radius: 8px;
+    border-radius: 0.5rem;
     width: 100%;
   }
 

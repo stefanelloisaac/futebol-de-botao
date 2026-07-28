@@ -3,6 +3,8 @@
   import { appState } from '$lib/app/appState.svelte';
   import { container } from '$lib/services/container';
   import type { Stats } from '$lib/services/ports/StatsService';
+  import ScreenLayout from '$lib/components/ui/ScreenLayout.svelte';
+  import BackButton from '$lib/components/ui/BackButton.svelte';
 
   let profile = $state(container.profile.getProfile());
   let stats = $state<Stats>(container.stats.getStats());
@@ -18,10 +20,6 @@
     editing = false;
   }
 
-  function goBack(): void {
-    appState.goHome();
-  }
-
   function resetStats(): void {
     if (confirm('Tem certeza? Todas as estatísticas serão zeradas.')) {
       container.stats.resetStats();
@@ -33,10 +31,10 @@
   const bestStreak = $derived(stats.bestStreak > 0 ? stats.bestStreak : '—');
 </script>
 
-<div class="screen">
-  <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Perfil</h2>
-
-  <div class="screen-body">
+<ScreenLayout title="Perfil">
+  {#snippet footer()}
+    <BackButton />
+  {/snippet}
     <div class="card" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
       {#if editing}
         <div class="edit-row">
@@ -98,56 +96,16 @@
     </div>
 
     <button class="btn-danger" onclick={resetStats}>Zerar estatísticas</button>
-  </div>
-
-  <button class="btn-back" onclick={goBack}>
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    Voltar
-  </button>
-</div>
+</ScreenLayout>
 
 <style>
-  .screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    min-height: 0;
-    width: 100%;
-    max-width: 440px;
-    padding: 24px;
-    gap: 24px;
-  }
-
-  h2 {
-    font-family: 'Ultra', serif;
-    font-weight: 400;
-    font-size: 28px;
-    color: var(--ink);
-    margin: 0;
-    flex-shrink: 0;
-  }
-
-  .screen-body {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-  }
-
   .card {
     background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: 12px;
+    border: 0.125rem solid var(--border);
+    border-radius: 0.75rem;
     padding: 1.2rem 1.5rem;
     width: 100%;
-    max-width: 340px;
+    max-width: 21.25rem;
   }
 
   .name-row {
@@ -168,7 +126,7 @@
     color: var(--cream-50);
     cursor: pointer;
     padding: 0.25rem;
-    border-radius: 4px;
+    border-radius: 0.25rem;
   }
   .edit-btn:hover {
     color: var(--ink);
@@ -189,12 +147,12 @@
 
   .name-input {
     flex: 1;
-    min-width: 140px;
+    min-width: 8.75rem;
     background: var(--bg);
-    border: 2px solid var(--border);
+    border: 0.125rem solid var(--border);
     color: var(--ink);
     padding: 0.5rem 0.75rem;
-    border-radius: 6px;
+    border-radius: 0.375rem;
     font-size: 1rem;
     font-family: 'Oswald', sans-serif;
     width: 100%;
@@ -205,13 +163,13 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 0.6rem;
     width: 100%;
-    max-width: 340px;
+    max-width: 21.25rem;
   }
 
   .stat-card {
     background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: 10px;
+    border: 0.125rem solid var(--border);
+    border-radius: 0.625rem;
     padding: 0.8rem 0.5rem;
     display: flex;
     flex-direction: column;

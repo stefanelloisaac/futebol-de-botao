@@ -2,6 +2,7 @@
   import { fly, scale } from 'svelte/transition';
   import { appState } from '$lib/app/appState.svelte';
   import type { TeamId } from '$lib/engine';
+  import ScreenLayout from '$lib/components/ui/ScreenLayout.svelte';
 
   let result = $derived(appState.lastResult);
   let winnerName = $derived(result ? appState.teamNames[result.winner] : '');
@@ -16,10 +17,7 @@
   }
 </script>
 
-<div class="screen">
-  <div class="screen-body">
-    <h2 in:fly={{ y: -16, duration: 250, opacity: 0 }}>Fim de jogo!</h2>
-
+<ScreenLayout title="Fim de jogo!">
     {#if result}
       <div class={`winner ${winnerColor}`} in:scale={{ duration: 350, delay: 150, start: 0.7, opacity: 0 }}>
         <span class="trophy">
@@ -51,61 +49,29 @@
       <button class="btn-primary" onclick={rematch}>Revanche</button>
       <button class="btn-secondary" onclick={goHome}>Menu</button>
     </div>
-  </div>
-</div>
+</ScreenLayout>
 
 <style>
-  .screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    min-height: 0;
-    width: 100%;
-    max-width: 440px;
-    padding: 24px;
-  }
-
-  .screen-body {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-  }
-
-  h2 {
-    font-family: 'Ultra', serif;
-    font-weight: 400;
-    font-size: 32px;
-    color: var(--ink);
-    margin: 0;
-  }
-
   .winner {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 0.25rem;
   }
-  .winner .trophy { margin-bottom: 4px; }
+  .winner .trophy { margin-bottom: 0.25rem; }
 
   .winner .name {
     font-family: 'Ultra', serif;
     font-weight: 400;
-    font-size: 28px;
+    font-size: 1.75rem;
     color: var(--ink);
   }
   .winner .venceu {
     font-family: 'Oswald', sans-serif;
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 0.125em;
   }
   .winner.red .venceu { color: var(--red); }
   .winner.blue .venceu { color: var(--blue); }
@@ -113,31 +79,31 @@
   .score {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 1rem;
     background: var(--paper);
-    padding: 14px 28px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 0.875rem 1.75rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.08);
   }
 
   .team-score {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 0.125rem;
   }
   .team-score .name {
     font-family: 'Oswald', sans-serif;
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.03125em;
     color: var(--wood-dk);
   }
   .team-score .goals {
     font-family: 'Ultra', serif;
     font-weight: 400;
-    font-size: 36px;
+    font-size: 2.25rem;
     line-height: 1;
     color: var(--ink);
   }
@@ -146,15 +112,15 @@
 
   .sep {
     font-family: 'Ultra', serif;
-    font-size: 30px;
+    font-size: 1.875rem;
     color: var(--wood-lt);
   }
 
   .actions {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625rem;
     width: 100%;
-    max-width: 260px;
+    max-width: 16.25rem;
   }
 </style>

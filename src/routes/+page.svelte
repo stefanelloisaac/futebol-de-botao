@@ -9,10 +9,11 @@
 <style>
   .wrap {
     width: 100%;
-    max-width: 440px;
+    max-width: 27.5rem;
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 8px 10px;
+    padding: 0.5rem 0.625rem;
+    overflow: hidden;
   }
 </style>

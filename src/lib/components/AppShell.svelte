@@ -52,39 +52,39 @@
   <div class="shell">
     {#key current}
       {#if current === 'home'}
-        <div in:fly={{ y: -16, duration: 250, opacity: 0 }}>
+        <div class="screen-transition" in:fly={{ y: -16, duration: 250, opacity: 0 }}>
           <HomeScreen />
         </div>
       {:else if current === 'mode-select'}
-        <div in:fly={{ y: 12, duration: 200, opacity: 0 }}>
+        <div class="screen-transition" in:fly={{ y: 12, duration: 200, opacity: 0 }}>
           <ModeSelectScreen />
         </div>
       {:else if current === 'match'}
-        <div in:scale={{ duration: 200, start: 0.95, opacity: 0 }}>
+        <div class="screen-transition" in:scale={{ duration: 200, start: 0.95, opacity: 0 }}>
           <MatchScreen />
         </div>
       {:else if current === 'result'}
-        <div in:scale={{ duration: 200, start: 0.95, opacity: 0 }}>
+        <div class="screen-transition" in:scale={{ duration: 200, start: 0.95, opacity: 0 }}>
           <ResultScreen />
         </div>
       {:else if current === 'settings'}
-        <div in:fly={{ y: 12, duration: 200, opacity: 0 }}>
+        <div class="screen-transition" in:fly={{ y: 12, duration: 200, opacity: 0 }}>
           <SettingsScreen />
         </div>
       {:else if current === 'profile'}
-        <div in:fly={{ y: 12, duration: 200, opacity: 0 }}>
+        <div class="screen-transition" in:fly={{ y: 12, duration: 200, opacity: 0 }}>
           <ProfileScreen />
         </div>
       {:else if current === 'history'}
-        <div in:fly={{ y: 12, duration: 200, opacity: 0 }}>
+        <div class="screen-transition" in:fly={{ y: 12, duration: 200, opacity: 0 }}>
           <HistoryScreen />
         </div>
       {:else if current === 'ranking'}
-        <div in:fly={{ y: 12, duration: 200, opacity: 0 }}>
+        <div class="screen-transition" in:fly={{ y: 12, duration: 200, opacity: 0 }}>
           <RankingScreen />
         </div>
       {:else if current === 'daily-challenge'}
-        <div in:fly={{ y: 12, duration: 200, opacity: 0 }}>
+        <div class="screen-transition" in:fly={{ y: 12, duration: 200, opacity: 0 }}>
           <DailyChallengeScreen />
         </div>
       {/if}
@@ -99,7 +99,7 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    gap: 8px;
+    gap: 0.5rem;
     pointer-events: none;
     user-select: none;
     animation: splashFadeOut 0.3s 0.7s both;
@@ -112,8 +112,8 @@
   }
 
   .splash-logo {
-    width: 96px;
-    height: 96px;
+    width: 6rem;
+    height: 6rem;
   }
 
   .splash-icon {
@@ -130,7 +130,7 @@
   .splash-title {
     font-family: 'Ultra', serif;
     font-weight: 400;
-    font-size: 32px;
+    font-size: 2rem;
     line-height: 0.95;
     text-align: center;
     color: var(--ink);
@@ -139,20 +139,20 @@
 
   .splash-sub {
     font-family: 'Oswald', sans-serif;
-    font-size: 13px;
-    letter-spacing: 3px;
+    font-size: 0.8125rem;
+    letter-spacing: 0.1875em;
     text-transform: uppercase;
     color: var(--wood-dk);
     margin: 0;
   }
 
   .splash-loader {
-    width: 140px;
-    height: 3px;
-    border-radius: 2px;
+    width: 8.75rem;
+    height: 0.1875rem;
+    border-radius: 0.125rem;
     background: var(--cream);
     overflow: hidden;
-    margin-top: 16px;
+    margin-top: 1rem;
     position: relative;
   }
   .splash-loader::after {
@@ -161,7 +161,7 @@
     left: -40%;
     width: 40%;
     height: 100%;
-    border-radius: 2px;
+    border-radius: 0.125rem;
     background: var(--mustard);
     animation: loaderSlide 1s ease-in-out infinite;
   }
@@ -169,5 +169,19 @@
   @keyframes loaderSlide {
     from { left: -40%; }
     to { left: 100%; }
+  }
+
+  .shell {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .screen-transition {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 </style>

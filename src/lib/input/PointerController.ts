@@ -52,9 +52,18 @@ export class PointerController {
 
 	private toLogical(e: PointerEvent): { x: number; y: number } {
 		const rect = this.canvas.getBoundingClientRect();
+		const px = e.clientX - rect.left;
+		const py = e.clientY - rect.top;
+
+		const cw = rect.width;
+		const ch = rect.height;
+		const scale = Math.min(cw / FIELD.width, ch / FIELD.height);
+		const ox = (cw - FIELD.width * scale) / 2;
+		const oy = (ch - FIELD.height * scale) / 2;
+
 		return {
-			x: (e.clientX - rect.left) * (FIELD.width / rect.width),
-			y: (e.clientY - rect.top) * (FIELD.height / rect.height)
+			x: (px - ox) / scale,
+			y: (py - oy) / scale
 		};
 	}
 

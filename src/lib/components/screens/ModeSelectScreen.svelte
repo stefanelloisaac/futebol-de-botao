@@ -2,6 +2,8 @@
   import { fly } from 'svelte/transition';
   import { appState } from '$lib/app/appState.svelte';
   import type { Difficulty } from '$lib/engine';
+  import ScreenLayout from '$lib/components/ui/ScreenLayout.svelte';
+  import BackButton from '$lib/components/ui/BackButton.svelte';
 
   let selectedDifficulty = $state<Difficulty>('medium');
 
@@ -17,10 +19,6 @@
     appState.goToScreen('daily-challenge');
   }
 
-  function goBack(): void {
-    appState.goHome();
-  }
-
   function difficultyLabel(d: Difficulty): string {
     switch (d) {
       case 'easy': return 'Fácil';
@@ -30,10 +28,10 @@
   }
 </script>
 
-<div class="screen">
-  <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Modo de jogo</h2>
-
-  <div class="screen-body">
+<ScreenLayout title="Modo de jogo">
+  {#snippet footer()}
+    <BackButton />
+  {/snippet}
     <div class="modes" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
       <button class="mode-card" onclick={selectSingle}>
         <span class="icon">
@@ -87,65 +85,25 @@
         {/each}
       </div>
     </div>
-  </div>
-
-  <button class="btn-back" onclick={goBack}>
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    Voltar
-  </button>
-</div>
+</ScreenLayout>
 
 <style>
-  .screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    min-height: 0;
-    width: 100%;
-    max-width: 440px;
-    padding: 24px;
-    gap: 24px;
-  }
-
-  h2 {
-    font-family: 'Ultra', serif;
-    font-weight: 400;
-    font-size: 28px;
-    color: var(--ink);
-    margin: 0;
-    flex-shrink: 0;
-  }
-
-  .screen-body {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-  }
-
   .modes {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625rem;
     width: 100%;
-    max-width: 300px;
+    max-width: 18.75rem;
   }
 
   .mode-card {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    min-height: 52px;
-    border: 2px solid var(--ink);
-    border-radius: 10px;
+    gap: 0.75rem;
+    padding: 0.75rem 0.875rem;
+    min-height: 3.25rem;
+    border: 0.125rem solid var(--ink);
+    border-radius: 0.625rem;
     background: var(--cream);
     cursor: pointer;
     transition: transform 0.08s, box-shadow 0.08s;
@@ -153,7 +111,7 @@
     width: 100%;
   }
   .mode-card:active {
-    transform: translateY(2px);
+    transform: translateY(0.125rem);
     box-shadow: none;
   }
   .mode-card.daily {
@@ -162,55 +120,55 @@
   }
 
   .icon {
-    flex: 0 0 40px;
+    flex: 0 0 2.5rem;
   }
 
   .label {
     font-family: 'Oswald', sans-serif;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 1.125rem;
     color: var(--ink);
     display: block;
   }
 
   .desc {
     font-family: 'Oswald', sans-serif;
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: var(--wood-dk);
     display: block;
   }
 
   .difficulty-section {
     width: 100%;
-    max-width: 300px;
+    max-width: 18.75rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
   }
 
   .diff-label {
     font-family: 'Oswald', sans-serif;
-    font-size: 14px;
+    font-size: 0.875rem;
     color: var(--wood-dk);
     margin: 0;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.0625em;
   }
 
   .diff-buttons {
     display: flex;
-    gap: 8px;
+    gap: 0.5rem;
   }
 
   .diff-btn {
     font-family: 'Oswald', sans-serif;
     font-weight: 600;
-    font-size: 15px;
-    padding: 8px 18px;
-    min-height: 44px;
-    border: 2px solid var(--ink);
-    border-radius: 8px;
+    font-size: 0.9375rem;
+    padding: 0.5rem 1.125rem;
+    min-height: 2.75rem;
+    border: 0.125rem solid var(--ink);
+    border-radius: 0.5rem;
     background: var(--cream);
     color: var(--ink);
     cursor: pointer;

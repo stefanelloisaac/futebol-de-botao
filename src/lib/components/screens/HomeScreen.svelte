@@ -61,11 +61,6 @@
       <button class="btn-secondary" onclick={openHistory}>Histórico</button>
       <button class="btn-secondary" onclick={openSettings}>Configurações</button>
     </div>
-
-    <div class="howto" in:fly={{ y: 20, duration: 300, delay: 200, opacity: 0 }}>
-      <h3>Como jogar</h3>
-      <p>Arraste para trás e solte para chutar o botão na direção da bola. Marque 3 gols para vencer!</p>
-    </div>
   </div>
 </div>
 
@@ -77,45 +72,45 @@
     flex: 1;
     min-height: 0;
     width: 100%;
-    max-width: 440px;
-    padding: 24px;
-    gap: 12px;
+    max-width: 27.5rem;
+    padding: 1.5rem;
+    gap: 0.75rem;
   }
 
   .logo {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 0.25rem;
     flex-shrink: 0;
   }
 
   .logo-svg {
-    width: 140px;
+    width: 8.75rem;
     height: auto;
-    margin-bottom: 4px;
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+    margin-bottom: 0.25rem;
+    filter: drop-shadow(0 0.125rem 0.375rem rgba(0,0,0,0.15));
   }
 
   .logo h1 {
     font-family: 'Ultra', serif;
     font-weight: 400;
     margin: 0;
-    font-size: clamp(36px, 10vw, 52px);
+    font-size: clamp(2.25rem, 10vw, 3.25rem);
     line-height: 0.92;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.03125em;
     color: var(--ink);
     text-align: center;
   }
 
   .logo .sub {
     font-family: 'Oswald', sans-serif;
-    font-size: 14px;
-    letter-spacing: 3px;
+    font-size: 0.875rem;
+    letter-spacing: 0.1875em;
     text-transform: uppercase;
     color: var(--wood-dk);
     text-align: center;
-    margin-top: 6px;
+    margin-top: 0.375rem;
   }
 
   .screen-body {
@@ -126,29 +121,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 1rem;
   }
 
   .menu {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625rem;
     width: 100%;
-    max-width: 260px;
-  }
-
-  .howto {
-    text-align: center;
-    max-width: 320px;
-    font-family: 'Oswald', sans-serif;
-    font-size: 15px;
-    color: var(--wood-dk);
-  }
-  .howto h3 {
-    font-family: 'Ultra', serif;
-    font-weight: 400;
-    color: var(--ink);
-    margin: 0 0 4px;
-    font-size: 18px;
+    max-width: 16.25rem;
   }
 </style>

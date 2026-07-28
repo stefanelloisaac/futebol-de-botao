@@ -19,6 +19,7 @@
   let golScorer = $state<TeamId | null>(null);
   let shaking = $state(false);
   let golFlash = $state<'red' | 'blue' | null>(null);
+  let goalHistory = $state<TeamId[]>([]);
 
   let game: GameCanvas;
   let mode = $state<GameMode>(appState.mode);
@@ -60,6 +61,7 @@
     golShow = true;
     golFlash = scorer;
     shaking = true;
+    goalHistory = [...goalHistory, scorer];
     setTimeout(() => {
       golShow = false;
       golFlash = null;
@@ -74,7 +76,6 @@
       winner
     };
 
-    // Record total shots for stats before ending the match
     appState.lastShots = game?.getTotalShots() ?? 0;
 
     if (settings.getSoundEnabled()) {
@@ -109,6 +110,7 @@
     golFlash = null;
     shaking = false;
     started = false;
+    goalHistory = [];
 
     if (settings.getSoundEnabled()) {
       sound.play('whistle_start');
@@ -139,9 +141,20 @@
 </script>
 
 <div class="match-screen">
-  <Scoreboard {scoreRed} {scoreBlue} {activeTeam} {golFlash} />
+  <!-- Top bar: pause button + scoreboard (OUTSIDE canvas) -->
+  <div class="match-topbar">
+    <button class="pause-btn" onclick={togglePause} aria-label={paused ? 'Continuar' : 'Pausar'}>
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/>
+        <rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/>
+      </svg>
+    </button>
 
-  <div class="field-wrap" class:shaking>
+    <Scoreboard {scoreRed} {scoreBlue} {activeTeam} {golFlash} {goalHistory} />
+  </div>
+
+  <!-- Canvas area (untouched, full remaining space) -->
+  <div class="field-area" class:shaking>
     <GameCanvas
       bind:this={game}
       {mode}
@@ -161,13 +174,6 @@
       />
     {/if}
   </div>
-
-  <button class="pause-btn" onclick={togglePause} aria-label={paused ? 'Continuar' : 'Pausar'}>
-    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-      <rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/>
-      <rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/>
-    </svg>
-  </button>
 </div>
 
 <style>
@@ -177,51 +183,68 @@
     flex: 1;
     min-height: 0;
     width: 100%;
-    position: relative;
   }
 
-  .field-wrap {
-    flex: 1;
-    min-height: 0;
+  .match-topbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
+    min-height: 3rem;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, var(--wood-lt), var(--wood-dk));
+    border-bottom: 0.125rem solid var(--ink);
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.2);
+  }
+
+  .pause-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--ink);
+    border: none;
+    color: var(--mustard);
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    flex-shrink: 0;
+    padding: 0;
+    transition: transform 0.08s;
+  }
+  .pause-btn:active {
+    transform: scale(0.9);
+  }
+
+  .field-area {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
     position: relative;
+    display: flex;
     overflow: hidden;
   }
 
-  .field-wrap.shaking {
+  .field-area.shaking {
     animation: shake 0.3s ease;
   }
 
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-4px); }
-    50% { transform: translateX(4px); }
-    75% { transform: translateX(-3px); }
+    25% { transform: translateX(-0.25rem); }
+    50% { transform: translateX(0.25rem); }
+    75% { transform: translateX(-0.1875rem); }
   }
 
-  .pause-btn {
-    position: absolute;
-    bottom: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--ink);
-    border: none;
-    color: var(--mustard);
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    z-index: 5;
-  }
-
-  .pause-btn:active {
-    transform: translateX(-50%) scale(0.93);
+  @media (max-width: 23.75em) {
+    .match-topbar {
+      gap: 0.25rem;
+      padding: 0.25rem 0.375rem;
+      min-height: 2.625rem;
+    }
+    .pause-btn {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
   }
 </style>
