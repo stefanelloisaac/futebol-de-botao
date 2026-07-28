@@ -174,15 +174,14 @@
   .match-screen {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0;
-    height: 100%;
     width: 100%;
+    height: 100%;
     position: relative;
   }
 
   .field-wrap {
     flex: 1;
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;

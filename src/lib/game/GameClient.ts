@@ -77,33 +77,20 @@ export class GameClient {
     return this._totalShots;
   }
 
-  /** Resize canvas to fill its container while maintaining 400:660 aspect ratio. */
+  /** Resize canvas buffer to match CSS-displayed size × DPR. */
   private resize(): void {
-    const parent = this.canvas.parentElement;
-    if (!parent) return;
-
-    const containerW = parent.clientWidth;
-    const containerH = parent.clientHeight;
-    if (containerW <= 0 || containerH <= 0) return;
-
-    const aspect = FIELD.width / FIELD.height; // 400/660 ≈ 0.606
-    let w: number, h: number;
-
-    if (containerW / containerH < aspect) {
-      // Container is taller than the aspect → fit by width
-      w = containerW;
-      h = w / aspect;
-    } else {
-      // Container is wider than the aspect → fit by height
-      h = containerH;
-      w = h * aspect;
-    }
+    const rect = this.canvas.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
+    if (w <= 0 || h <= 0) return;
 
     const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2.5));
-    this.canvas.width = Math.round(w * dpr);
-    this.canvas.height = Math.round(h * dpr);
-    this.canvas.style.width = `${Math.round(w)}px`;
-    this.canvas.style.height = `${Math.round(h)}px`;
+    const bw = Math.round(w * dpr);
+    const bh = Math.round(h * dpr);
+    if (this.canvas.width !== bw || this.canvas.height !== bh) {
+      this.canvas.width = bw;
+      this.canvas.height = bh;
+    }
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 

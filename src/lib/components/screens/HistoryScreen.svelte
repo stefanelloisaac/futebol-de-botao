@@ -28,14 +28,7 @@
   }
 </script>
 
-<div class="history">
-  <button class="btn-back" onclick={goBack}>
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    Voltar
-  </button>
-
+<div class="screen">
   <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Histórico de Partidas</h2>
 
   {#if records.length === 0}
@@ -66,25 +59,34 @@
       {/each}
     </div>
   {/if}
+
+  <button class="btn-back" onclick={goBack} in:fly={{ y: 16, duration: 250, delay: 200, opacity: 0 }}>
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Voltar
+  </button>
 </div>
 
 <style>
-  .history {
+  .screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
+    gap: 24px;
+    height: 100%;
+    padding: 24px;
+    overflow-y: auto;
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
   }
 
   h2 {
-    margin: 0;
-    color: var(--ink);
     font-family: 'Ultra', serif;
     font-weight: 400;
-    font-size: 1.6rem;
+    font-size: 28px;
+    color: var(--ink);
+    margin: 0;
   }
 
   .empty {
@@ -96,6 +98,7 @@
 
   .list {
     width: 100%;
+    max-width: 400px;
     display: flex;
     flex-direction: column;
     gap: 0.6rem;

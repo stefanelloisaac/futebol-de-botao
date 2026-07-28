@@ -22,20 +22,13 @@
   }
 </script>
 
-<div class="daily">
-  <button class="btn-back" onclick={goBack}>
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    Voltar
-  </button>
-
+<div class="screen">
   <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Desafio Diário</h2>
 
   <div class="card" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
     <div class="card-icon">
       <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
-        <path d="M12 6v4c0 4-2 8-6 10v2c0 4 4 8 8 8h20c4 0 8-4 8-8v-2c-4-2-6-6-6-10V6H12z" fill="#d9a441" stroke="#b8860b" stroke-width="1.5"/>
+        <path d="M12 6v4c0 4-2 8-6 10v2c0 4 4 8 8 8h20c0 0 0 0 0 0" fill="#d9a441" stroke="#b8860b" stroke-width="1.5"/>
         <rect x="17" y="28" width="14" height="4" rx="1" fill="#2a231b"/>
         <rect x="14" y="32" width="20" height="3" rx="1" fill="#2a231b"/>
         <rect x="19" y="35" width="10" height="8" rx="1" fill="#7a4d2b" stroke="#5c3820" stroke-width="0.8"/>
@@ -65,28 +58,35 @@
     {/if}
   </div>
 
-  <button class="btn-primary" onclick={playChallenge} in:fly={{ y: 16, duration: 250, delay: 200, opacity: 0 }}>
-    Jogar Desafio
+  <button class="btn-primary" onclick={playChallenge} in:fly={{ y: 16, duration: 250, delay: 200, opacity: 0 }}>Jogar Desafio</button>
+
+  <button class="btn-back" onclick={goBack} in:fly={{ y: 16, duration: 250, delay: 300, opacity: 0 }}>
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Voltar
   </button>
 </div>
 
 <style>
-  .daily {
+  .screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
+    gap: 24px;
+    height: 100%;
+    padding: 24px;
+    overflow-y: auto;
     width: 100%;
-    max-width: 400px;
+    max-width: 440px;
   }
 
   h2 {
-    margin: 0;
-    color: var(--ink);
     font-family: 'Ultra', serif;
     font-weight: 400;
-    font-size: 1.6rem;
+    font-size: 28px;
+    color: var(--ink);
+    margin: 0;
   }
 
   .card {
@@ -95,6 +95,7 @@
     border-radius: 14px;
     padding: 1.5rem;
     width: 100%;
+    max-width: 360px;
     display: flex;
     flex-direction: column;
     align-items: center;

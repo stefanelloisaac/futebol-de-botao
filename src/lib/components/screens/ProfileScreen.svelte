@@ -33,22 +33,17 @@
   const bestStreak = $derived(stats.bestStreak > 0 ? stats.bestStreak : '—');
 </script>
 
-<div class="profile">
-  <button class="btn-back" onclick={goBack}>
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    Voltar
-  </button>
-
+<div class="screen">
   <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Perfil</h2>
 
   <div class="card" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
     {#if editing}
       <div class="edit-row">
         <input type="text" bind:value={editName} class="name-input" placeholder="Seu apelido" maxlength="20" />
-        <button class="btn-primary" onclick={saveName} style="padding:0.5rem 1rem;min-height:40px;font-size:0.9rem">Salvar</button>
-        <button class="btn-secondary" onclick={() => { editing = false; editName = profile.name; }} style="padding:0.5rem 0.75rem;min-height:40px;font-size:0.9rem">Cancelar</button>
+        <div class="edit-btns">
+          <button class="btn-primary" onclick={saveName} style="padding:0.5rem 1rem;min-height:40px;font-size:0.9rem">Salvar</button>
+          <button class="btn-secondary" onclick={() => { editing = false; editName = profile.name; }} style="padding:0.5rem 0.75rem;min-height:40px;font-size:0.9rem">Cancelar</button>
+        </div>
       </div>
     {:else}
       <div class="name-row">
@@ -102,25 +97,34 @@
   </div>
 
   <button class="btn-danger" onclick={resetStats}>Zerar estatísticas</button>
+
+  <button class="btn-back" onclick={goBack} in:fly={{ y: 16, duration: 250, delay: 300, opacity: 0 }}>
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Voltar
+  </button>
 </div>
 
 <style>
-  .profile {
+  .screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
+    gap: 24px;
+    height: 100%;
+    padding: 24px;
+    overflow-y: auto;
     width: 100%;
-    max-width: 400px;
+    max-width: 440px;
   }
 
   h2 {
-    margin: 0;
-    color: var(--ink);
     font-family: 'Ultra', serif;
     font-weight: 400;
-    font-size: 1.6rem;
+    font-size: 28px;
+    color: var(--ink);
+    margin: 0;
   }
 
   .card {
@@ -129,6 +133,7 @@
     border-radius: 12px;
     padding: 1.2rem 1.5rem;
     width: 100%;
+    max-width: 340px;
   }
 
   .name-row {
@@ -151,7 +156,6 @@
     padding: 0.25rem;
     border-radius: 4px;
   }
-
   .edit-btn:hover {
     color: var(--ink);
     background: var(--surface-hover);
@@ -159,9 +163,14 @@
 
   .edit-row {
     display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .edit-btns {
+    display: flex;
     gap: 0.5rem;
-    align-items: center;
-    flex-wrap: wrap;
   }
 
   .name-input {
@@ -174,6 +183,7 @@
     border-radius: 6px;
     font-size: 1rem;
     font-family: 'Oswald', sans-serif;
+    width: 100%;
   }
 
   .stats-grid {
@@ -181,6 +191,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 0.6rem;
     width: 100%;
+    max-width: 340px;
   }
 
   .stat-card {

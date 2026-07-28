@@ -18,14 +18,7 @@
   }
 </script>
 
-<div class="ranking">
-  <button class="btn-back" onclick={goBack}>
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    Voltar
-  </button>
-
+<div class="screen">
   <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Ranking</h2>
 
   <div class="list" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
@@ -43,29 +36,39 @@
       </div>
     {/each}
   </div>
+
+  <button class="btn-back" onclick={goBack} in:fly={{ y: 16, duration: 250, delay: 200, opacity: 0 }}>
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Voltar
+  </button>
 </div>
 
 <style>
-  .ranking {
+  .screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
+    gap: 24px;
+    height: 100%;
+    padding: 24px;
+    overflow-y: auto;
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
   }
 
   h2 {
-    margin: 0;
-    color: var(--ink);
     font-family: 'Ultra', serif;
     font-weight: 400;
-    font-size: 1.6rem;
+    font-size: 28px;
+    color: var(--ink);
+    margin: 0;
   }
 
   .list {
     width: 100%;
+    max-width: 380px;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;

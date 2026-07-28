@@ -64,9 +64,12 @@
 <style>
   canvas {
     display: block;
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    border-radius: 12px;
+    box-shadow:
+      0 8px 0 rgba(0, 0, 0, 0.3),
+      0 14px 26px rgba(0, 0, 0, 0.3);
   }
 </style>

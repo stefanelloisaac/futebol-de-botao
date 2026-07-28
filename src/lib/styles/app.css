@@ -199,20 +199,6 @@ body::before {
 	align-items: center;
 	justify-content: center;
 }
-.stage canvas {
-	display: block;
-	aspect-ratio: 400 / 660;
-	max-height: 100%;
-	max-width: 100%;
-	width: auto;
-	height: auto;
-	margin: auto;
-	border-radius: 12px;
-	touch-action: none;
-	box-shadow:
-		0 8px 0 rgba(0, 0, 0, 0.3),
-		0 14px 26px rgba(0, 0, 0, 0.3);
-}
 .stage.shake {
 	animation: shk 0.35s;
 }

@@ -23,7 +23,7 @@
   }
 </script>
 
-<div class="home">
+<div class="screen">
   <div class="logo">
     <svg viewBox="0 0 200 140" class="logo-svg" aria-hidden="true">
       <defs>
@@ -68,12 +68,14 @@
 </div>
 
 <style>
-  .home {
+  .screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    padding: 16px 0;
+    gap: 24px;
+    height: 100%;
+    padding: 24px;
+    overflow-y: auto;
     width: 100%;
   }
 

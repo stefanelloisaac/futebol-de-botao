@@ -16,7 +16,7 @@
   }
 </script>
 
-<div class="result">
+<div class="screen">
   <h2 in:fly={{ y: -16, duration: 250, opacity: 0 }}>Fim de jogo!</h2>
 
   {#if result}
@@ -53,14 +53,15 @@
 </div>
 
 <style>
-  .result {
+  .screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 20px;
+    gap: 24px;
     height: 100%;
     padding: 24px;
+    overflow-y: auto;
+    width: 100%;
   }
 
   h2 {

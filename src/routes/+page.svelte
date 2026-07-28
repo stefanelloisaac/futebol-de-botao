@@ -11,6 +11,7 @@
     width: 100%;
     max-width: 440px;
     height: 100%;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
   }

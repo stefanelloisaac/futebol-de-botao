@@ -30,7 +30,7 @@
   }
 </script>
 
-<div class="mode-select">
+<div class="screen">
   <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Modo de jogo</h2>
 
   <div class="modes" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
@@ -98,20 +98,22 @@
 </div>
 
 <style>
-  .mode-select {
+  .screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 1.5rem 1rem;
+    gap: 24px;
+    height: 100%;
+    padding: 24px;
+    overflow-y: auto;
     width: 100%;
+    max-width: 440px;
   }
 
   h2 {
-    font-family: 'Oswald', sans-serif;
-    font-size: 24px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    font-family: 'Ultra', serif;
+    font-weight: 400;
+    font-size: 28px;
     color: var(--ink);
     margin: 0;
   }
@@ -138,12 +140,10 @@
     text-align: left;
     width: 100%;
   }
-
   .mode-card:active {
     transform: translateY(2px);
     box-shadow: none;
   }
-
   .mode-card.daily {
     border-color: var(--mustard);
     background: linear-gradient(135deg, var(--cream), #f0e0b8);
@@ -204,17 +204,14 @@
     cursor: pointer;
     transition: background 0.12s, color 0.12s;
   }
-
   .diff-btn.selected {
     background: var(--mustard);
     border-color: var(--mustard);
     color: var(--ink);
   }
-
   .diff-btn:hover {
     background: var(--paper);
   }
-
   .diff-btn.selected:hover {
     background: var(--mustard);
   }
