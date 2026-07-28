@@ -1,12 +1,20 @@
 <script lang="ts">
+  import { fly } from 'svelte/transition';
   import { appState } from '$lib/app/appState.svelte';
+  import { container } from '$lib/services/container';
+
+  const settings = container.settings;
+  const sound = container.sound;
 
   function toggleSound(): void {
     appState.soundEnabled = !appState.soundEnabled;
+    settings.setSoundEnabled(appState.soundEnabled);
+    sound.setMuted(!appState.soundEnabled);
   }
 
   function toggleVibration(): void {
     appState.vibrationEnabled = !appState.vibrationEnabled;
+    settings.setVibrationEnabled(appState.vibrationEnabled);
   }
 
   function goBack(): void {
@@ -15,25 +23,37 @@
 </script>
 
 <div class="settings">
-  <h2>Configurações</h2>
+  <h2 in:fly={{ y: -12, duration: 200, opacity: 0 }}>Configurações</h2>
 
-  <div class="options">
+  <div class="options" in:fly={{ y: 16, duration: 250, delay: 100, opacity: 0 }}>
     <label class="option">
-      <span>Som</span>
-      <button class="toggle" class:on={appState.soundEnabled} onclick={toggleSound}>
-        {appState.soundEnabled ? 'ON' : 'OFF'}
+      <span>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+          <path d="M19.1 4.9a10 10 0 010 14.2M15.5 8.5a5 5 0 010 7"/>
+        </svg>
+        Som
+      </span>
+      <button class="toggle" class:on={appState.soundEnabled} onclick={toggleSound} aria-label="Alternar som">
+        <span class="toggle-knob"></span>
       </button>
     </label>
 
     <label class="option">
-      <span>Vibração</span>
-      <button class="toggle" class:on={appState.vibrationEnabled} onclick={toggleVibration}>
-        {appState.vibrationEnabled ? 'ON' : 'OFF'}
+      <span>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        Vibração
+      </span>
+      <button class="toggle" class:on={appState.vibrationEnabled} onclick={toggleVibration} aria-label="Alternar vibração">
+        <span class="toggle-knob"></span>
       </button>
     </label>
   </div>
 
-  <div class="teams">
+  <div class="teams" in:fly={{ y: 16, duration: 250, delay: 200, opacity: 0 }}>
     <h3>Times</h3>
     <div class="team-row">
       <span class="dot red"></span>
@@ -44,6 +64,11 @@
       <span>Azul</span>
     </div>
     <p class="hint">Nomes personalizados em breve!</p>
+  </div>
+
+  <div class="about" in:fly={{ y: 16, duration: 250, delay: 300, opacity: 0 }}>
+    <p>Futebol de Botão — edição de mesa · 1962</p>
+    <p class="version">v0.2.0</p>
   </div>
 
   <button class="btn back" onclick={goBack}>Voltar</button>
@@ -80,81 +105,117 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 18px;
+    padding: 12px 14px;
     background: var(--cream);
-    border-radius: 8px;
+    border-radius: 10px;
     font-family: 'Oswald', sans-serif;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 500;
     color: var(--ink);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.08);
+  }
+
+  .option > span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .toggle {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    padding: 6px 18px;
+    width: 48px;
+    height: 26px;
+    border-radius: 13px;
     border: none;
-    border-radius: 20px;
     cursor: pointer;
+    position: relative;
     background: var(--wood-lt);
-    color: #fff;
-    transition: background 0.15s;
+    transition: background 0.2s;
+    padding: 0;
   }
   .toggle.on {
-    background: var(--felt);
+    background: var(--mustard);
+  }
+  .toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+  }
+  .toggle.on .toggle-knob {
+    transform: translateX(22px);
   }
 
   .teams {
-    background: var(--paper);
-    border-radius: 8px;
-    padding: 16px 20px;
     width: 100%;
     max-width: 300px;
   }
   .teams h3 {
-    margin: 0 0 10px;
     font-family: 'Oswald', sans-serif;
+    font-weight: 600;
     font-size: 16px;
-    color: var(--wood-dk);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--ink);
+    margin: 0 0 8px;
   }
   .team-row {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'Oswald', sans-serif;
-    font-size: 18px;
     padding: 6px 0;
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    color: var(--ink);
   }
   .dot {
     width: 14px;
     height: 14px;
     border-radius: 50%;
+    flex-shrink: 0;
   }
   .dot.red { background: var(--red); }
   .dot.blue { background: var(--blue); }
+
   .hint {
+    font-family: 'Oswald', sans-serif;
     font-size: 13px;
     color: var(--wood-dk);
-    margin: 8px 0 0;
     font-style: italic;
+    margin: 6px 0 0;
   }
 
-  .btn {
+  .about {
+    text-align: center;
     font-family: 'Oswald', sans-serif;
-    font-weight: 600;
+    font-size: 14px;
+    color: var(--wood-dk);
+  }
+  .about p { margin: 2px 0; }
+  .about .version {
+    font-size: 11px;
+    opacity: 0.6;
+  }
+
+  .btn.back {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
     font-size: 18px;
-    padding: 12px 32px;
+    padding: 10px 30px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
+    background: transparent;
+    color: var(--wood-dk);
+    border: 1.5px solid var(--wood-lt);
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn.back:hover {
     background: var(--cream);
     color: var(--ink);
-    box-shadow: 0 3px 0 rgba(0,0,0,0.12);
-    transition: transform 0.08s, box-shadow 0.08s;
-  }
-  .btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 rgba(0,0,0,0.12);
   }
 </style>

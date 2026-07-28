@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="64" fill="#1a1a2e"/>
+  <circle cx="256" cy="256" r="160" fill="none" stroke="#e94560" stroke-width="12"/>
+  <circle cx="256" cy="256" r="50" fill="#e94560"/>
+  <circle cx="256" cy="140" r="40" fill="#0f3460" stroke="#e94560" stroke-width="6"/>
+  <circle cx="256" cy="372" r="40" fill="#0f3460" stroke="#e94560" stroke-width="6"/>
+  <line x1="200" y1="140" x2="256" y2="256" stroke="#e94560" stroke-width="4"/>
+  <line x1="312" y1="140" x2="256" y2="256" stroke="#e94560" stroke-width="4"/>
+  <line x1="200" y1="372" x2="256" y2="256" stroke="#e94560" stroke-width="4"/>
+  <line x1="312" y1="372" x2="256" y2="256" stroke="#e94560" stroke-width="4"/>
+  <text x="256" y="460" text-anchor="middle" font-family="monospace" font-size="36" fill="#e94560" font-weight="bold">FUTEBOL</text>
+</svg>

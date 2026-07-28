@@ -8,13 +8,17 @@
     matchConfig,
     onstate,
     ongoal,
-    onmatchend
+    onmatchend,
+    onshot,
+    oncollision
   }: {
     mode: GameMode;
     matchConfig: MatchConfig;
     onstate?: (state: GameState) => void;
     ongoal?: (scorer: TeamId) => void;
     onmatchend?: (winner: TeamId) => void;
+    onshot?: (team: TeamId) => void;
+    oncollision?: () => void;
   } = $props();
 
   let canvas: HTMLCanvasElement;
@@ -26,7 +30,9 @@
       matchConfig,
       onState: (state) => onstate?.(state),
       onGoal: (scorer) => ongoal?.(scorer),
-      onMatchEnd: (winner) => onmatchend?.(winner)
+      onMatchEnd: (winner) => onmatchend?.(winner),
+      onShot: (team) => onshot?.(team),
+      onCollision: () => oncollision?.()
     });
     client.start();
     return () => client?.stop();

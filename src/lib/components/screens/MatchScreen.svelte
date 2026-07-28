@@ -7,35 +7,64 @@
   import PauseOverlay from '$lib/components/screens/PauseOverlay.svelte';
   import type { GameState, GameMode } from '$lib/game/GameClient';
   import type { MatchConfig, TeamId } from '$lib/engine';
+  import { container } from '$lib/services/container';
 
   let scoreRed = $state(0);
   let scoreBlue = $state(0);
   let activeTeam = $state<TeamId>('red');
   let paused = $state(false);
+  let started = $state(false);
 
   let golShow = $state(false);
+  let golScorer = $state<TeamId | null>(null);
   let shaking = $state(false);
+  let golFlash = $state<'red' | 'blue' | null>(null);
 
   let game: GameCanvas;
   let mode = $state<GameMode>(appState.mode);
   let matchConfig = $state<MatchConfig>(appState.matchConfig);
 
+  const sound = container.sound;
+  const settings = container.settings;
+
   function handleState(state: GameState): void {
     scoreRed = state.scoreRed;
     scoreBlue = state.scoreBlue;
     activeTeam = state.activeTeam;
+
+    if (!started && state.phase === 'aim') {
+      started = true;
+      if (settings.getSoundEnabled()) {
+        sound.play('whistle_start');
+      }
+      sound.startAmbient();
+    }
   }
 
-  async function handleGoal(): Promise<void> {
+  async function handleGoal(scorer: TeamId): Promise<void> {
     golShow = false;
     shaking = false;
+    golFlash = null;
+    golScorer = null;
     await tick();
+
+    if (settings.getSoundEnabled()) {
+      sound.play('goal');
+    }
+
+    if (settings.getVibrationEnabled() && navigator.vibrate) {
+      navigator.vibrate([100, 50, 100, 50, 200]);
+    }
+
+    golScorer = scorer;
     golShow = true;
+    golFlash = scorer;
     shaking = true;
     setTimeout(() => {
       golShow = false;
+      golFlash = null;
       shaking = false;
-    }, 1400);
+    }, 1600);
   }
 
   function handleMatchEnd(winner: TeamId): void {
@@ -44,6 +73,12 @@
       scoreBlue,
       winner
     };
+
+    if (settings.getSoundEnabled()) {
+      sound.play('whistle_end');
+    }
+    sound.stopAmbient();
+
     appState.endMatch(result);
   }
 
@@ -68,18 +103,40 @@
     scoreBlue = 0;
     activeTeam = 'red';
     golShow = false;
+    golFlash = null;
     shaking = false;
+    started = false;
+
+    if (settings.getSoundEnabled()) {
+      sound.play('whistle_start');
+    }
   }
 
   function handlePauseMenu(): void {
     paused = false;
     game?.destroy();
+    sound.stopAmbient();
     appState.goHome();
+  }
+
+  function handleShot(): void {
+    if (settings.getSoundEnabled()) {
+      sound.play('shot');
+    }
+  }
+
+  function handleCollision(): void {
+    if (settings.getSoundEnabled()) {
+      sound.play('collision');
+    }
+    if (settings.getVibrationEnabled() && navigator.vibrate) {
+      navigator.vibrate(30);
+    }
   }
 </script>
 
 <div class="match-screen">
-  <Scoreboard {scoreRed} {scoreBlue} {activeTeam} />
+  <Scoreboard {scoreRed} {scoreBlue} {activeTeam} {golFlash} />
 
   <div class="stage" class:shake={shaking}>
     <GameCanvas
@@ -89,8 +146,13 @@
       onstate={handleState}
       ongoal={handleGoal}
       onmatchend={handleMatchEnd}
+      onshot={handleShot}
+      oncollision={handleCollision}
     />
-    <div class="gol" class:show={golShow}><span>GOL!</span></div>
+    <div class="gol" class:show={golShow} class:red={golScorer === 'red'} class:blue={golScorer === 'blue'}>
+      <span class="gol-text">GOL!</span>
+      <span class="gol-sparkles"></span>
+    </div>
   </div>
 
   <div class="ctrls">
@@ -153,58 +215,98 @@
     justify-content: center;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.12s;
+    transform: scale(0.4);
+    transition: opacity 0.15s, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .gol.show {
     opacity: 1;
+    transform: scale(1);
   }
-  .gol span {
+
+  .gol-text {
     font-family: 'Ultra', serif;
-    font-size: clamp(60px, 18vw, 100px);
+    font-weight: 400;
+    font-size: clamp(48px, 18vw, 80px);
     color: var(--mustard);
     text-shadow:
-      2px 2px 0 rgba(0,0,0,0.4),
-      0 0 40px rgba(217, 164, 65, 0.5);
-    animation: pulse 0.4s ease-out;
+      0 2px 0 #5c3820,
+      0 4px 0 #3d2a14,
+      0 0 30px rgba(217, 164, 65, 0.4);
+    animation: golPulse 0.8s ease-in-out infinite alternate;
   }
-  @keyframes pulse {
-    0% { transform: scale(2); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+
+  .gol.red .gol-text {
+    color: var(--red);
+    text-shadow:
+      0 2px 0 #5c1a16,
+      0 4px 0 #3a0e0b,
+      0 0 30px rgba(178, 58, 52, 0.4);
+  }
+
+  .gol.blue .gol-text {
+    color: var(--blue);
+    text-shadow:
+      0 2px 0 #14273d,
+      0 4px 0 #0a1523,
+      0 0 30px rgba(47, 75, 115, 0.4);
+  }
+
+  @keyframes golPulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.08); }
+  }
+
+  .gol-sparkles {
+    position: absolute;
+    inset: -20px;
+    background:
+      radial-gradient(circle at 30% 40%, rgba(217, 164, 65, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 70% 60%, rgba(217, 164, 65, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 40%);
+    animation: sparkleRotate 2s linear infinite;
+  }
+
+  .gol.red .gol-sparkles {
+    background:
+      radial-gradient(circle at 30% 40%, rgba(200, 60, 50, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 70% 60%, rgba(200, 60, 50, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 40%);
+  }
+
+  .gol.blue .gol-sparkles {
+    background:
+      radial-gradient(circle at 30% 40%, rgba(60, 90, 140, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 70% 60%, rgba(60, 90, 140, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 40%);
+  }
+
+  @keyframes sparkleRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 
   .ctrls {
-    flex: 0 0 auto;
     display: flex;
     justify-content: center;
     padding: 8px;
+    flex-shrink: 0;
   }
 
-  .btn {
+  .btn.pause-btn {
     font-family: 'Oswald', sans-serif;
     font-weight: 600;
     font-size: 18px;
-    padding: 8px 20px;
+    padding: 6px 28px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     background: var(--cream);
     color: var(--ink);
-    box-shadow: 0 3px 0 rgba(0,0,0,0.12);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.1);
     transition: transform 0.08s, box-shadow 0.08s;
   }
-  .btn:active {
+  .btn.pause-btn:active {
     transform: translateY(2px);
-    box-shadow: 0 1px 0 rgba(0,0,0,0.12);
-  }
-
-  .pause-btn {
-    font-size: 24px;
-    width: 50px;
-    height: 50px;
-    padding: 0;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    box-shadow: 0 0 0 rgba(0,0,0,0.1);
   }
 </style>

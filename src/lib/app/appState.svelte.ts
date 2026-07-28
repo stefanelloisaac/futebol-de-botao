@@ -1,6 +1,7 @@
 import type { Screen } from './screens';
 import type { GameMode } from '$lib/game/GameClient';
 import type { MatchConfig, TeamId } from '$lib/engine';
+import { container } from '$lib/services/container';
 
 export interface MatchResult {
   scoreRed: number;
@@ -9,13 +10,22 @@ export interface MatchResult {
 }
 
 function createAppState() {
+  const settings = container.settings;
+  const sound = container.sound;
+
   let screen = $state<Screen>('home');
   let mode = $state<GameMode>('single');
   let matchConfig = $state<MatchConfig>({ targetGoals: 3 });
   let lastResult = $state<MatchResult | null>(null);
-  let soundEnabled = $state(true);
-  let vibrationEnabled = $state(true);
-  let teamNames = $state<Record<TeamId, string>>({ red: 'Vermelho', blue: 'Azul' });
+
+  let soundEnabled = $state(settings.getSoundEnabled());
+  let vibrationEnabled = $state(settings.getVibrationEnabled());
+  let teamNames = $state<Record<TeamId, string>>({
+    red: settings.getTeamName('red'),
+    blue: settings.getTeamName('blue')
+  });
+
+  sound.setMuted(!soundEnabled);
 
   return {
     get screen() { return screen; },
@@ -26,9 +36,16 @@ function createAppState() {
     get lastResult() { return lastResult; },
     set lastResult(v: MatchResult | null) { lastResult = v; },
     get soundEnabled() { return soundEnabled; },
-    set soundEnabled(v: boolean) { soundEnabled = v; },
+    set soundEnabled(v: boolean) {
+      soundEnabled = v;
+      settings.setSoundEnabled(v);
+      sound.setMuted(!v);
+    },
     get vibrationEnabled() { return vibrationEnabled; },
-    set vibrationEnabled(v: boolean) { vibrationEnabled = v; },
+    set vibrationEnabled(v: boolean) {
+      vibrationEnabled = v;
+      settings.setVibrationEnabled(v);
+    },
     get teamNames() { return teamNames; },
     set teamNames(v: Record<TeamId, string>) { teamNames = v; },
 

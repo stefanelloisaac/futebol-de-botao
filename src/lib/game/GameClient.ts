@@ -18,12 +18,13 @@ export interface GameClientOptions {
   onState?: (state: GameState) => void;
   onGoal?: (scorer: TeamId) => void;
   onMatchEnd?: (winner: TeamId) => void;
+  onShot?: (team: TeamId) => void;
+  onCollision?: () => void;
 }
 
 const AI_DELAY_MS = 650;
 const STEP_MS = 1000 / 60;
 
-/** Runs a single local match: fixed-step simulation, rendering and input wiring. */
 export class GameClient {
   private ctx: CanvasRenderingContext2D;
   private match: Match;
@@ -52,7 +53,9 @@ export class GameClient {
       onMatchEnd: (winner) => {
         this.stop();
         this.options.onMatchEnd?.(winner);
-      }
+      },
+      onShot: (team) => this.options.onShot?.(team),
+      onCollision: () => this.options.onCollision?.()
     });
 
     this.pointer = new PointerController(canvas, {
@@ -62,50 +65,35 @@ export class GameClient {
     });
   }
 
+  private isHumanTurn(): boolean {
+    const snap = this.match.snapshot();
+    if (snap.phase !== 'aim') return false;
+    if (this.options.getMode() === 'local') return true;
+    return snap.activeTeam === 'red';
+  }
+
   start(): void {
-    if (this.running) return;
     this.running = true;
-    const tick = (): void => {
-      if (!this.running) return;
-      this.match.step(STEP_MS);
-      this.maybeScheduleAi();
-      this.renderer.draw(this.ctx, this.match.snapshot(), this.pointer.getAim());
-      this.emitState();
-      this.rafId = requestAnimationFrame(tick);
-    };
-    this.rafId = requestAnimationFrame(tick);
+    this.tick();
   }
 
   stop(): void {
-    if (!this.running) return;
     this.running = false;
     cancelAnimationFrame(this.rafId);
-    this.pointer.destroy();
-  }
-
-  pause(): void {
-    if (!this.running) return;
-    this.running = false;
-    cancelAnimationFrame(this.rafId);
-  }
-
-  resume(): void {
-    if (this.running) return;
-    this.start();
+    this.aiScheduled = false;
   }
 
   restart(): void {
-    this.pause();
-    // Recreate match with fresh config
+    this.stop();
     this.match = new Match(this.options.matchConfig, {
       onGoal: (scorer) => this.options.onGoal?.(scorer),
       onMatchEnd: (winner) => {
         this.stop();
         this.options.onMatchEnd?.(winner);
-      }
+      },
+      onShot: (team) => this.options.onShot?.(team),
+      onCollision: () => this.options.onCollision?.()
     });
-    // Re-wire pointer (old pointer has references to old match)
-    this.pointer.destroy();
     this.pointer = new PointerController(this.canvas, {
       getSnapshot: () => this.match.snapshot(),
       isHumanTurn: () => this.isHumanTurn(),
@@ -114,41 +102,67 @@ export class GameClient {
     this.start();
   }
 
+  pause(): void {
+    this.running = false;
+    cancelAnimationFrame(this.rafId);
+    this.aiScheduled = false;
+  }
+
+  resume(): void {
+    this.running = true;
+    this.tick();
+  }
+
   destroy(): void {
     this.stop();
+    this.pointer.destroy();
   }
 
-  private isHumanTurn(): boolean {
-    return !(this.options.getMode() === 'single' && this.match.activeTeam === 'blue');
-  }
+  private tick = (): void => {
+    if (!this.running) return;
 
-  private maybeScheduleAi(): void {
-    if (this.aiScheduled) return;
-    if (this.options.getMode() !== 'single') return;
-    if (this.match.phase !== 'aim' || this.match.activeTeam !== 'blue') return;
+    this.match.update();
+    this.emitState();
+    this.scheduleAi();
 
-    this.aiScheduled = true;
-    window.setTimeout(() => {
-      this.aiScheduled = false;
-      if (this.options.getMode() !== 'single') return;
-      if (this.match.phase !== 'aim' || this.match.activeTeam !== 'blue') return;
-      const cmd = computeAiShot(this.match.snapshot(), 'blue');
-      if (cmd) this.match.applyShot(cmd);
-    }, AI_DELAY_MS);
-  }
+    const snap = this.match.snapshot();
+    const aim = this.pointer.getAim();
+    this.renderer.draw(this.ctx, snap, aim);
+
+    this.rafId = requestAnimationFrame(this.tick);
+  };
 
   private emitState(): void {
-    const state: GameState = {
-      scoreRed: this.match.scoreRed,
-      scoreBlue: this.match.scoreBlue,
-      activeTeam: this.match.activeTeam,
-      phase: this.match.phase,
-      winner: this.match.winner
-    };
-    const key = `${state.scoreRed}-${state.scoreBlue}-${state.activeTeam}-${state.phase}`;
+    const snap = this.match.snapshot();
+    const key = `${snap.scoreRed}|${snap.scoreBlue}|${snap.activeTeam}|${snap.phase}|${snap.winner}`;
     if (key !== this.lastState) {
       this.lastState = key;
-      this.options.onState?.(state);
+      this.options.onState?.({
+        scoreRed: snap.scoreRed,
+        scoreBlue: snap.scoreBlue,
+        activeTeam: snap.activeTeam,
+        phase: snap.phase,
+        winner: snap.winner
+      });
     }
+  }
+
+  private scheduleAi(): void {
+    if (this.aiScheduled) return;
+    const snap = this.match.snapshot();
+    if (this.options.getMode() !== 'single') return;
+    if (snap.phase !== 'aim' || snap.activeTeam !== 'blue') return;
+
+    this.aiScheduled = true;
+    setTimeout(() => {
+      if (!this.running) return;
+      this.aiScheduled = false;
+      if (this.match.snapshot().phase !== 'aim') return;
+
+      const shot = computeAiShot(this.match.snapshot(), 'blue');
+      if (shot) {
+        this.match.applyShot(shot);
+      }
+    }, AI_DELAY_MS);
   }
 }
