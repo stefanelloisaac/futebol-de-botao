@@ -285,6 +285,7 @@ body::before {
 	border: 2.5px solid var(--ink);
 	border-radius: 8px;
 	padding: 11px 8px;
+	min-height: 44px;
 	box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
 	transition:
 		transform 0.05s,
@@ -336,5 +337,42 @@ body::before {
 	}
 	.title h1 {
 		font-size: 26px;
+	}
+}
+
+/* ── Mobile narrow screens ── */
+@media (max-width: 380px) {
+	body {
+		padding: 4px 6px;
+	}
+	.board {
+		padding: 5px;
+		gap: 4px;
+	}
+	.team .sc {
+		font-size: 28px;
+	}
+	.team .nm {
+		font-size: 11px;
+	}
+	.turn {
+		min-width: 60px;
+	}
+	.turn .who {
+		font-size: 12px;
+	}
+	.ctrls {
+		gap: 5px;
+	}
+	.btn {
+		font-size: 11px;
+		padding: 10px 4px;
+	}
+}
+
+/* ── iOS safe area ── */
+@supports (padding: env(safe-area-inset-bottom)) {
+	body {
+		padding-bottom: calc(8px + env(safe-area-inset-bottom));
 	}
 }

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">FutebolBotao</string>
+    <string name="title_activity_main">FutebolBotao</string>
+    <string name="package_name">com.stefanelloisaac.futebolbotao</string>
+    <string name="custom_url_scheme">com.stefanelloisaac.futebolbotao</string>
+</resources>

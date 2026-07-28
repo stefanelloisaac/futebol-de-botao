@@ -124,6 +124,7 @@
     align-items: center;
     gap: 12px;
     padding: 12px 14px;
+    min-height: 52px;
     border: 2px solid var(--ink);
     border-radius: 10px;
     background: var(--cream);
@@ -190,6 +191,7 @@
     font-weight: 600;
     font-size: 15px;
     padding: 8px 18px;
+    min-height: 44px;
     border: 2px solid var(--ink);
     border-radius: 8px;
     background: var(--cream);
@@ -217,6 +219,7 @@
     font-size: 16px;
     font-weight: 600;
     padding: 10px 28px;
+    min-height: 44px;
     background: var(--cream);
     border: 2px solid var(--ink);
     border-radius: 8px;
