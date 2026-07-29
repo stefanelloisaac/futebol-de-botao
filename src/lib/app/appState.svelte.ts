@@ -2,18 +2,16 @@ import type { Screen } from './screens';
 import type { GameMode } from '$lib/game/GameClient';
 import type { MatchConfig, TeamId } from '$lib/engine';
 import { container } from '$lib/services/container';
+import { createMatchContext, shouldSubmitDaily, type MatchContext, type MatchResult } from './appState';
 
-export interface MatchResult {
-  scoreRed: number;
-  scoreBlue: number;
-  winner: TeamId;
-}
+export type { MatchResult };
 
 function createAppState() {
   const settings = container.settings;
   const sound = container.sound;
 
   let screen = $state<Screen>('home');
+  let matchContext = $state<MatchContext>(createMatchContext('single'));
   let mode = $state<GameMode>('single');
   let matchConfig = $state<MatchConfig>({ targetGoals: 3 });
   let lastResult = $state<MatchResult | null>(null);
@@ -26,7 +24,7 @@ function createAppState() {
     blue: settings.getTeamName('blue')
   });
 
-  sound.setMuted(!soundEnabled);
+  sound.setMuted(!settings.getSoundEnabled());
 
   return {
     get screen() { return screen; },
@@ -56,9 +54,10 @@ function createAppState() {
       screen = s;
     },
 
-    startMatch(m: GameMode, cfg?: MatchConfig) {
-      mode = m;
-      if (cfg) matchConfig = cfg;
+    startMatch(m: GameMode, cfg?: MatchConfig, isDaily = false) {
+      matchContext = createMatchContext(m, cfg ?? matchConfig, isDaily ? 'daily' : 'normal');
+      mode = matchContext.mode;
+      matchConfig = matchContext.config;
       screen = 'match';
     },
 
@@ -92,7 +91,7 @@ function createAppState() {
       container.ranking.updatePlayerScore(rankingScore);
 
       // Submit daily challenge result if playing in daily mode
-      if (matchConfig.difficulty === 'hard') {
+      if (shouldSubmitDaily(matchContext)) {
         container.daily.submitResult({
           scoreRed: result.scoreRed,
           scoreBlue: result.scoreBlue

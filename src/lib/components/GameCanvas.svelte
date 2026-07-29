@@ -1,22 +1,14 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { GameClient, type GameMode, type GameState } from '$lib/game/GameClient';
-  import type { MatchConfig, TeamId } from '$lib/engine';
+  import type { MatchConfig, MatchEndResult, TeamId } from '$lib/engine';
 
-  let {
-    mode,
-    matchConfig,
-    onstate,
-    ongoal,
-    onmatchend,
-    onshot,
-    oncollision
-  }: {
+  let { mode, matchConfig, onstate, ongoal, onmatchend, onshot, oncollision }: {
     mode: GameMode;
     matchConfig: MatchConfig;
     onstate?: (state: GameState) => void;
     ongoal?: (scorer: TeamId) => void;
-    onmatchend?: (winner: TeamId) => void;
+    onmatchend?: (result: MatchEndResult) => void;
     onshot?: (team: TeamId) => void;
     oncollision?: () => void;
   } = $props();
@@ -30,7 +22,7 @@
       matchConfig,
       onState: (state) => onstate?.(state),
       onGoal: (scorer) => ongoal?.(scorer),
-      onMatchEnd: (winner) => onmatchend?.(winner),
+      onMatchEnd: (result) => onmatchend?.(result),
       onShot: (team) => onshot?.(team),
       onCollision: () => oncollision?.()
     });
@@ -38,25 +30,11 @@
     return () => client?.destroy();
   });
 
-  export function restart(): void {
-    client?.restart();
-  }
-
-  export function pause(): void {
-    client?.pause();
-  }
-
-  export function resume(): void {
-    client?.resume();
-  }
-
-  export function destroy(): void {
-    client?.destroy();
-  }
-
-  export function getTotalShots(): number {
-    return client?.totalShots ?? 0;
-  }
+  export function restart(): void { client?.restart(); }
+  export function pause(): void { client?.pause(); }
+  export function resume(): void { client?.resume(); }
+  export function destroy(): void { client?.destroy(); }
+  export function getTotalShots(): number { return client?.totalShots ?? 0; }
 </script>
 
 <canvas bind:this={canvas}></canvas>
@@ -69,8 +47,6 @@
     height: 100%;
     touch-action: none;
     border-radius: 0.75rem;
-    box-shadow:
-      0 0.5rem 0 rgba(0, 0, 0, 0.3),
-      0 0.875rem 1.625rem rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0.5rem 0 rgba(0, 0, 0, 0.3), 0 0.875rem 1.625rem rgba(0, 0, 0, 0.3);
   }
 </style>

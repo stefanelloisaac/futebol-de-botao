@@ -60,7 +60,7 @@
           <ModeSelectScreen />
         </div>
       {:else if current === 'match'}
-        <div class="screen-transition" in:scale={{ duration: 200, start: 0.95, opacity: 0 }}>
+        <div class="screen-transition" in:fly={{ y: 12, duration: 200, opacity: 0 }}>
           <MatchScreen />
         </div>
       {:else if current === 'result'}

@@ -15,8 +15,8 @@
   function playChallenge(): void {
     appState.startMatch('single', {
       targetGoals: challenge.config.targetGoals,
-      difficulty: 'hard'
-    });
+      difficulty: challenge.config.difficulty
+    }, true);
   }
 </script>
 

@@ -58,25 +58,28 @@ const DIFFICULTY_MAP: Record<Difficulty, DifficultyParams> = {
 export function computeAiShot(
   snapshot: MatchSnapshot,
   team: TeamId,
-  difficulty: Difficulty = 'medium'
+  difficulty: Difficulty = 'medium',
+  rng: () => number = Math.random
 ): ShotCommand | null {
   const params = DIFFICULTY_MAP[difficulty];
   const own = snapshot.discs.filter((d) => d.team === team);
   if (own.length === 0) return null;
 
   const ball = snapshot.ball.position;
-  let shooter = own[0];
-  let best = Infinity;
+  const candidates = own
+    .map((disc) => ({ disc, distance: len(sub(disc.position, ball)) }))
+    .sort((a, b) => a.distance - b.distance);
+  const closest = candidates[0];
+  let shooter = closest.disc;
 
-  for (const d of own) {
-    const dist = len(sub(d.position, ball));
-    // Occasionally pick a non-closest disc on easy/medium
-    if (dist < best || (Math.random() < params.blunderChance && dist < best * 1.8)) {
-      best = dist;
-      // Still pick the closest sometimes on blunder
-      if (Math.random() > params.blunderChance || dist < best) {
-        shooter = d;
-      }
+  // A blunder may select another *valid* nearby disc. It never changes which
+  // candidate is the closest, so difficulty cannot corrupt the ranking.
+  if (rng() < params.blunderChance) {
+    const alternatives = candidates.filter((candidate) =>
+      candidate.disc.id !== closest.disc.id && candidate.distance <= closest.distance * 1.8
+    );
+    if (alternatives.length > 0) {
+      shooter = alternatives[Math.min(alternatives.length - 1, Math.floor(rng() * alternatives.length))].disc;
     }
   }
 
@@ -86,8 +89,8 @@ export function computeAiShot(
     y: ball.y - desired.y * (DISC_RADIUS + BALL_RADIUS)
   };
   const aim = normalise(sub(contact, shooter.position));
-  const angle = Math.atan2(aim.y, aim.x) + (Math.random() - 0.5) * params.angleNoise;
-  const power = params.powerBase + Math.random() * params.powerRange;
+  const angle = Math.atan2(aim.y, aim.x) + (rng() - 0.5) * params.angleNoise;
+  const power = params.powerBase + rng() * params.powerRange;
 
   return {
     team,

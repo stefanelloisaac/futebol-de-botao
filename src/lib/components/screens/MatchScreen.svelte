@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { tick } from 'svelte';
+  import { onDestroy, tick } from 'svelte';
   import { appState } from '$lib/app/appState.svelte';
-  import type { MatchResult } from '$lib/app/appState.svelte';
   import Scoreboard from '$lib/components/Scoreboard.svelte';
   import GameCanvas from '$lib/components/GameCanvas.svelte';
   import PauseOverlay from '$lib/components/screens/PauseOverlay.svelte';
   import type { GameState, GameMode } from '$lib/game/GameClient';
-  import type { MatchConfig, TeamId } from '$lib/engine';
+  import type { MatchConfig, MatchEndResult, TeamId } from '$lib/engine';
   import { container } from '$lib/services/container';
 
   let scoreRed = $state(0);
@@ -15,8 +14,7 @@
   let paused = $state(false);
   let started = $state(false);
 
-  let golShow = $state(false);
-  let golScorer = $state<TeamId | null>(null);
+  let goalTimeoutId: ReturnType<typeof setTimeout> | null = null;
   let shaking = $state(false);
   let golFlash = $state<'red' | 'blue' | null>(null);
   let goalHistory = $state<TeamId[]>([]);
@@ -42,11 +40,15 @@
     }
   }
 
-  async function handleGoal(scorer: TeamId): Promise<void> {
-    golShow = false;
-    shaking = false;
+  function clearGoalAnimation(): void {
+    if (goalTimeoutId !== null) clearTimeout(goalTimeoutId);
+    goalTimeoutId = null;
     golFlash = null;
-    golScorer = null;
+    shaking = false;
+  }
+
+  async function handleGoal(scorer: TeamId): Promise<void> {
+    clearGoalAnimation();
     await tick();
 
     if (settings.getSoundEnabled()) {
@@ -57,24 +59,17 @@
       navigator.vibrate([100, 50, 100, 50, 200]);
     }
 
-    golScorer = scorer;
-    golShow = true;
     golFlash = scorer;
     shaking = true;
     goalHistory = [...goalHistory, scorer];
-    setTimeout(() => {
-      golShow = false;
+    goalTimeoutId = setTimeout(() => {
+      goalTimeoutId = null;
       golFlash = null;
       shaking = false;
     }, 1600);
   }
 
-  function handleMatchEnd(winner: TeamId): void {
-    const result: MatchResult = {
-      scoreRed,
-      scoreBlue,
-      winner
-    };
+  function handleMatchEnd(result: MatchEndResult): void {
 
     appState.lastShots = game?.getTotalShots() ?? 0;
 
@@ -101,21 +96,20 @@
   }
 
   function handlePauseRestart(): void {
+    // Resetar a UI antes de reativar o loop; handleState é a fonte única do apito.
     paused = false;
-    game?.restart();
     scoreRed = 0;
     scoreBlue = 0;
     activeTeam = 'red';
-    golShow = false;
-    golFlash = null;
-    shaking = false;
+    clearGoalAnimation();
     started = false;
     goalHistory = [];
-
-    if (settings.getSoundEnabled()) {
-      sound.play('whistle_start');
-    }
+    game?.restart();
   }
+
+  onDestroy(() => {
+    clearGoalAnimation();
+  });
 
   function handlePauseMenu(): void {
     paused = false;

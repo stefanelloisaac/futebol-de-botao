@@ -2,18 +2,18 @@
   import AppShell from '$lib/components/AppShell.svelte';
 </script>
 
-<div class="wrap">
+<div class="app-root">
   <AppShell />
 </div>
 
 <style>
-  .wrap {
+  .app-root {
     width: 100%;
-    max-width: 27.5rem;
-    flex: 1;
+    min-width: 0;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    padding: 0.5rem 0.625rem;
     overflow: hidden;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
 </style>

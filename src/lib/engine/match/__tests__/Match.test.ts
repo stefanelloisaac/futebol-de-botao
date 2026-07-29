@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { Match } from '../Match';
 import type { MatchConfig } from '../../types';
 
@@ -52,6 +52,16 @@ describe('Match', () => {
     expect(snap).toHaveProperty('ball');
     expect(Array.isArray(snap.discs)).toBe(true);
     expect(snap.discs.length).toBeGreaterThan(0);
+  });
+
+  it('emite placar final autoritativo para o gol vencedor', () => {
+    const onMatchEnd = vi.fn();
+    const match = new Match({ targetGoals: 1 }, { onMatchEnd });
+    match.forceGoalForTest('red');
+    match.update();
+
+    expect(onMatchEnd).toHaveBeenCalledWith({ winner: 'red', scoreRed: 1, scoreBlue: 0 });
+    expect(match.snapshot()).toMatchObject({ phase: 'finished', winner: 'red', scoreRed: 1, scoreBlue: 0 });
   });
 
   it('exposes the physics engine', () => {

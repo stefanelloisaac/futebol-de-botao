@@ -4,17 +4,11 @@
  */
 
 export type TeamId = 'red' | 'blue';
-
-/** The match is either waiting for a shot ('aim'), letting bodies settle ('resolving'),
- *  or finished when a team reaches the target goal count. */
 export type MatchPhase = 'aim' | 'resolving' | 'finished';
-
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
 export interface MatchConfig {
-  /** Number of goals required to win the match. */
   targetGoals: number;
-  /** AI difficulty (only relevant in single-player mode). */
   difficulty?: Difficulty;
 }
 
@@ -23,11 +17,6 @@ export interface Vec2 {
   y: number;
 }
 
-/**
- * The network-ready unit of play: "team T flicks disc D with velocity V".
- * Designed early on purpose — this is what a client will one day send to the
- * authoritative server for online PvP.
- */
 export interface ShotCommand {
   team: TeamId;
   discId: number;
@@ -45,6 +34,13 @@ export interface DiscView {
 export interface BallView {
   position: Vec2;
   radius: number;
+}
+
+/** Authoritative payload emitted when a match reaches its target score. */
+export interface MatchEndResult {
+  winner: TeamId;
+  scoreRed: number;
+  scoreBlue: number;
 }
 
 /** An immutable read-model of the match, produced for rendering and input. */
