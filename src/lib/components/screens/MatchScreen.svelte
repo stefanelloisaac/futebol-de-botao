@@ -232,7 +232,7 @@
 
   @media (min-width: 48em) {
     .match-screen {
-      max-width: 62.5rem;
+      max-width: 37.5rem;
       margin-inline: auto;
     }
   }
