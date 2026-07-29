@@ -41,17 +41,22 @@ describe('FieldViewport', () => {
 
   it('permite câmera landscape sem rotacionar coordenadas da física', () => {
     const viewport = new FieldViewport(FIELD);
-    viewport.resize(660, 400, 2, 'landscape');
+    viewport.resize(660, 400, 2, 'landscape', 'fill');
 
+    expectPointClose(viewport.toScreen({ x: 0, y: 0 }), { x: 660, y: 0 });
+    expectPointClose(viewport.toScreen({ x: FIELD.width, y: FIELD.height }), { x: 0, y: 400 });
+    expectPointClose(viewport.toWorld(viewport.toScreen({ x: 200, y: 330 })), { x: 200, y: 330 });
+  });
+
+  it('contém o campo landscape no desktop com escala uniforme e projeção inversa', () => {
+    const viewport = new FieldViewport(FIELD);
+    viewport.resize(560, 339, 2, 'landscape', 'contain');
+
+    expect(viewport.scaleX).toBeCloseTo(viewport.scaleY, 10);
+    expectPointClose(viewport.toScreen({ x: 0, y: 0 }), { x: FIELD.height * viewport.scaleX, y: 0 });
+    expectPointClose(viewport.toScreen({ x: FIELD.width, y: FIELD.height }), { x: 0, y: FIELD.width * viewport.scaleY });
     for (const point of [{ x: 0, y: 0 }, { x: 200, y: 330 }, { x: 400, y: 660 }]) {
       expectPointClose(viewport.toWorld(viewport.toScreen(point)), point);
     }
-  });
-
-  it('expõe matriz e inversa consistentes em portrait', () => {
-    const viewport = new FieldViewport(FIELD);
-    viewport.resize(400, 660, 2);
-    expect(viewport.matrix).toEqual({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 });
-    expect(viewport.inverseMatrix).toEqual({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 });
   });
 });

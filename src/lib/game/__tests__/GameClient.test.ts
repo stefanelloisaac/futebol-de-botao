@@ -50,10 +50,10 @@ function snapshot(activeTeam: TeamId = 'blue') {
   };
 }
 
-function createClient(onShot = vi.fn()) {
+function createClient(onShot = vi.fn(), width = 400, height = 660) {
   const canvas = document.createElement('canvas');
   Object.defineProperty(canvas, 'getBoundingClientRect', {
-    value: () => ({ left: 0, top: 0, width: 400, height: 660 })
+    value: () => ({ left: 0, top: 0, width, height })
   });
   canvas.getContext = vi.fn(() => ({
     setTransform: vi.fn(), clearRect: vi.fn(), save: vi.fn(), restore: vi.fn()
@@ -112,6 +112,29 @@ describe('GameClient AI lifecycle', () => {
     expect(onShot).toHaveBeenCalledTimes(1);
     expect(onShot).toHaveBeenCalledWith('blue');
     expect(client.totalShots).toBe(1);
+    client.destroy();
+  });
+});
+
+describe('GameClient viewport policy', () => {
+  it('mantém mobile em portrait/fill', () => {
+    const { client } = createClient(vi.fn(), 390, 844);
+    const viewport = (client as unknown as { viewport: { orientation: string; fit: string } }).viewport;
+
+    expect(viewport.orientation).toBe('portrait');
+    expect(viewport.fit).toBe('fill');
+    client.destroy();
+  });
+
+  it('usa landscape/contain só no desktop para preservar discos circulares', () => {
+    const { client } = createClient(vi.fn(), 1280, 720);
+    const viewport = (client as unknown as {
+      viewport: { orientation: string; fit: string; scaleX: number; scaleY: number };
+    }).viewport;
+
+    expect(viewport.orientation).toBe('landscape');
+    expect(viewport.fit).toBe('contain');
+    expect(viewport.scaleX).toBeCloseTo(viewport.scaleY, 10);
     client.destroy();
   });
 });

@@ -91,10 +91,10 @@ export class GameClient {
     const rect = this.canvas.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) return;
     const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2.5));
-    // The current product policy is portrait/fill. FieldViewport owns the
-    // extensible camera API, so landscape can later be opted in without
-    // altering Matter coordinates or pointer math.
-    this.viewport.resize(rect.width, rect.height, dpr, 'portrait', 'fill');
+    // Desktop rotates only the camera. The logical field and physics remain
+    // portrait; a uniform scale preserves circular discs and their markings.
+    const orientation = rect.width >= 768 ? 'landscape' : 'portrait';
+    this.viewport.resize(rect.width, rect.height, dpr, orientation, orientation === 'landscape' ? 'contain' : 'fill');
     if (this.canvas.width !== this.viewport.backingWidth || this.canvas.height !== this.viewport.backingHeight) {
       this.canvas.width = this.viewport.backingWidth;
       this.canvas.height = this.viewport.backingHeight;
