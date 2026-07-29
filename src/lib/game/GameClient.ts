@@ -93,7 +93,7 @@ export class GameClient {
     const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2.5));
     // Desktop rotates only the camera. The logical field and physics remain
     // portrait; a uniform scale preserves circular discs and their markings.
-    const orientation = rect.width >= 768 ? 'landscape' : 'portrait';
+    const orientation = window.innerWidth >= 768 ? 'landscape' : 'portrait';
     this.viewport.resize(rect.width, rect.height, dpr, orientation, orientation === 'landscape' ? 'contain' : 'fill');
     if (this.canvas.width !== this.viewport.backingWidth || this.canvas.height !== this.viewport.backingHeight) {
       this.canvas.width = this.viewport.backingWidth;

@@ -232,14 +232,8 @@
 
   @media (min-width: 48em) {
     .match-screen {
-      width: min(100%, 35rem);
-      flex: 0 0 auto;
       margin-inline: auto;
-    }
-
-    .field-area {
-      flex: none;
-      aspect-ratio: 660 / 400;
+      max-width: 40rem;
     }
   }
 

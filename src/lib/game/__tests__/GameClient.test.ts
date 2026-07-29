@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GameClient } from '../GameClient';
 import { Match, type TeamId } from '../../engine';
 
@@ -67,6 +67,10 @@ function createClient(onShot = vi.fn(), width = 400, height = 660) {
 }
 
 describe('GameClient AI lifecycle', () => {
+  beforeEach(() => {
+    Object.defineProperty(window, 'innerWidth', { value: 375, configurable: true });
+  });
+
   afterEach(() => {
     vi.useRealTimers();
     vi.restoreAllMocks();
@@ -118,6 +122,7 @@ describe('GameClient AI lifecycle', () => {
 
 describe('GameClient viewport policy', () => {
   it('mantém mobile em portrait/fill', () => {
+    Object.defineProperty(window, 'innerWidth', { value: 390, configurable: true });
     const { client } = createClient(vi.fn(), 390, 844);
     const viewport = (client as unknown as { viewport: { orientation: string; fit: string } }).viewport;
 
@@ -127,6 +132,7 @@ describe('GameClient viewport policy', () => {
   });
 
   it('usa landscape/contain só no desktop para preservar discos circulares', () => {
+    Object.defineProperty(window, 'innerWidth', { value: 1280, configurable: true });
     const { client } = createClient(vi.fn(), 1280, 720);
     const viewport = (client as unknown as {
       viewport: { orientation: string; fit: string; scaleX: number; scaleY: number };
