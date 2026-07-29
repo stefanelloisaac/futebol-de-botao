@@ -73,6 +73,7 @@
     min-height: 0;
     width: 100%;
     max-width: 27.5rem;
+    margin-inline: auto;
     padding: 1.5rem;
     gap: 0.75rem;
   }

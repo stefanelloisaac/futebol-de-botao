@@ -230,6 +230,13 @@
     75% { transform: translateX(-0.1875rem); }
   }
 
+  @media (min-width: 48em) {
+    .match-screen {
+      max-width: 62.5rem;
+      margin-inline: auto;
+    }
+  }
+
   @media (max-width: 23.75em) {
     .match-topbar {
       gap: 0.25rem;
