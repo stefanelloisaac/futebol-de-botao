@@ -91,7 +91,6 @@ export class GameClient {
       this.canvas.width = bw;
       this.canvas.height = bh;
     }
-    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
   private isHumanTurn(): boolean {
@@ -164,7 +163,18 @@ export class GameClient {
     // Render
     const state = this.match.snapshot();
     const aim = this.pointer.getAim();
+    this.ctx.save();
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    const cssW = this.canvas.clientWidth;
+    const cssH = this.canvas.clientHeight;
+    const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2.5));
+    const scale = Math.min(cssW / FIELD.width, cssH / FIELD.height);
+    const ox = (cssW - FIELD.width * scale) / 2;
+    const oy = (cssH - FIELD.height * scale) / 2;
+    this.ctx.setTransform(dpr * scale, 0, 0, dpr * scale, dpr * ox, dpr * oy);
     this.renderer.draw(this.ctx, state, aim);
+    this.ctx.restore();
 
     // Feed state to UI
     const key = `${state.scoreRed}|${state.scoreBlue}|${state.phase}|${state.activeTeam}`;
